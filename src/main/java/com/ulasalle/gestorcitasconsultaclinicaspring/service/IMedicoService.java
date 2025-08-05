@@ -1,6 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.service;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dtos.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
 
 import java.util.List;

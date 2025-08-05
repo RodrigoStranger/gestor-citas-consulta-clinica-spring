@@ -1,4 +1,4 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dtos.validator;
+package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

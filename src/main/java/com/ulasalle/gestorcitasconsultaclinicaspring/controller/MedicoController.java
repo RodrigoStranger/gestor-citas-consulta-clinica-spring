@@ -1,6 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dtos.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.IMedicoService;
 import jakarta.validation.Valid;
