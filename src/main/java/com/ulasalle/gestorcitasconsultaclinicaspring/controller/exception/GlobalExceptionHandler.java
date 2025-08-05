@@ -2,11 +2,13 @@ package com.ulasalle.gestorcitasconsultaclinicaspring.controller.exception;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.ResponseWrapper;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.BusinessException;
+import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.ErrorCodeEnum;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -52,6 +54,19 @@ public class GlobalExceptionHandler {
         }
 
         ResponseWrapper<Void> response = ResponseWrapper.error(message, 500);
+        return response.toResponseEntity();
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<?> handleNoHandlerFoundException(
+            NoHandlerFoundException exception
+    ) {
+        ErrorCodeEnum errorCode = ErrorCodeEnum.RUTA_NO_ENCONTRADA;
+        ResponseWrapper<Void> response = ResponseWrapper.error(
+            errorCode.getMessage(),
+            404,
+            errorCode.getCode()
+        );
         return response.toResponseEntity();
     }
 }
