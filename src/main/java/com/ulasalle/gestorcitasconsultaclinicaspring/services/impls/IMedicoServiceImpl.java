@@ -16,18 +16,14 @@ import java.time.LocalDate;
 @Transactional
 public class IMedicoServiceImpl implements IMedicoService {
     private final IMedicoJPARepository medicoRepository;
-
     public IMedicoServiceImpl(IMedicoJPARepository medicoRepository) {
         this.medicoRepository = medicoRepository;
     }
-
     @Override
     public Medico crearMedico(MedicoDTO medicoDTO) {
         String nombreCompleto = TextNormalizationUtils.normalizeText(
             medicoDTO.getNombre() + " " + medicoDTO.getApellidos()
         );
-
-        // Verificar si ya existe un médico con el mismo nombre completo normalizado
         boolean nombreCompletoExiste = medicoRepository.findAll().stream()
                 .anyMatch(medico -> {
                     String nombreCompletoExistente = TextNormalizationUtils.normalizeText(
@@ -35,11 +31,9 @@ public class IMedicoServiceImpl implements IMedicoService {
                     );
                     return nombreCompletoExistente.equals(nombreCompleto);
                 });
-
         if (nombreCompletoExiste) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_NOMBRE_EN_USO);
         }
-
         if (medicoRepository.existsByDni(medicoDTO.getDni())) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_DNI_EN_USO);
         }
@@ -52,7 +46,7 @@ public class IMedicoServiceImpl implements IMedicoService {
         }
         Medico medico = new Medico();
         medico.setDni(medicoDTO.getDni());
-        medico.setClaveAcceso(medicoDTO.getClaveAcceso());
+        medico.setClave(medicoDTO.getClave());
         medico.setNombre(medicoDTO.getNombre());
         medico.setApellidos(medicoDTO.getApellidos());
         medico.setCorreo(medicoDTO.getCorreo());

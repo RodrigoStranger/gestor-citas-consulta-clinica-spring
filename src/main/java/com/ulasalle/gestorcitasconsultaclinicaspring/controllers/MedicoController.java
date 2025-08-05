@@ -27,9 +27,10 @@ public class MedicoController {
     }
     @PostMapping
     public ResponseEntity<Map<String, Object>> crearMedico(@Valid @RequestBody MedicoDTO medicoDTO) {
-        medicoService.crearMedico(medicoDTO);
+        Medico medicoCreado = medicoService.crearMedico(medicoDTO);
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Médico creado satisfactoriamente");
+        response.put("data", medicoCreado);
         response.put("status", "201");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

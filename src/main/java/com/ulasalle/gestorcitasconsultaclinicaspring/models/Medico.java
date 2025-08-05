@@ -19,8 +19,8 @@ public class Medico {
     @Column(name = "dni")
     private String dni;
 
-    @Column(name = "clave_acceso")
-    private String claveAcceso;
+    @Column(name = "clave")
+    private String clave;
 
     @Column(name = "nombre")
     private String nombre;
