@@ -22,37 +22,37 @@ public class EspecialidadController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseWrapper<Especialidad>> crearEspecialidad(@Valid @RequestBody EspecialidadDTO especialidadDTO) {
+    public ResponseEntity<?> crearEspecialidad(@Valid @RequestBody EspecialidadDTO especialidadDTO) {
         Especialidad especialidad = especialidadService.crearEspecialidad(especialidadDTO);
         ResponseWrapper<Especialidad> response = ResponseWrapper.success(especialidad, "Especialidad creada exitosamente");
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return response.toResponseEntity();
     }
 
     @GetMapping
-    public ResponseEntity<ResponseWrapper<List<Especialidad>>> listarEspecialidades() {
+    public ResponseEntity<?> listarEspecialidades() {
         List<Especialidad> especialidades = especialidadService.listarEspecialidades();
         ResponseWrapper<List<Especialidad>> response = ResponseWrapper.success(especialidades, "Lista de especialidades obtenida exitosamente");
-        return ResponseEntity.ok(response);
+        return response.toResponseEntity();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseWrapper<Especialidad>> buscarEspecialidadPorId(@PathVariable Long id) {
+    public ResponseEntity<?> buscarEspecialidadPorId(@PathVariable Long id) {
         Especialidad especialidad = especialidadService.buscarPorId(id);
         ResponseWrapper<Especialidad> response = ResponseWrapper.success(especialidad, "Especialidad encontrada exitosamente");
-        return ResponseEntity.ok(response);
+        return response.toResponseEntity();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseWrapper<Especialidad>> actualizarEspecialidad(@PathVariable Long id, @Valid @RequestBody EspecialidadDTO especialidadDTO) {
+    public ResponseEntity<?> actualizarEspecialidad(@PathVariable Long id, @Valid @RequestBody EspecialidadDTO especialidadDTO) {
         Especialidad especialidad = especialidadService.actualizarEspecialidad(id, especialidadDTO);
         ResponseWrapper<Especialidad> response = ResponseWrapper.success(especialidad, "Especialidad actualizada exitosamente");
-        return ResponseEntity.ok(response);
+        return response.toResponseEntity();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseWrapper<Void>> eliminarEspecialidad(@PathVariable Long id) {
+    public ResponseEntity<?> eliminarEspecialidad(@PathVariable Long id) {
         especialidadService.eliminarEspecialidad(id);
         ResponseWrapper<Void> response = ResponseWrapper.success(null, "Especialidad eliminada exitosamente");
-        return ResponseEntity.ok(response);
+        return response.toResponseEntity();
     }
 }

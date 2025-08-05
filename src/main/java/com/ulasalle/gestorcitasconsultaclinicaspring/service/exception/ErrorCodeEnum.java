@@ -10,6 +10,7 @@ public enum ErrorCodeEnum {
     MEDICO_CORREO_EN_USO("MED_003", "El correo del médico ya se encuentra en uso por otro medico."),
     MEDICO_FECHA_NACIMIENTO_INVALIDA("MED_004", "La fecha de nacimiento del médico no es válida."),
     MEDICO_APELLIDOS_EN_USO("MED_005", "Los apellidos del médico ya se encuentran en uso por otro medico."),
+    MEDICO_ESPECIALIDADES_DUPLICADAS("MED_006", "No se pueden agregar especialidades duplicadas para el mismo médico."),
     ESPECIALIDAD_NO_ENCONTRADA("ESP_001", "La especialidad especificada no fue encontrada."),
     ESPECIALIDAD_NOMBRE_EN_USO("ESP_002", "El nombre de la especialidad ya se encuentra en uso.");
 

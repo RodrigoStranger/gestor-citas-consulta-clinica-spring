@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +55,18 @@ public class IMedicoServiceImpl implements IMedicoService {
         if (medicoDTO.getFechaNacimiento() != null &&
                 !medicoDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_FECHA_NACIMIENTO_INVALIDA);
+        }
+
+        // Validar que no haya especialidades duplicadas
+        List<Long> especialidadIds = new ArrayList<>();
+        for (EspecialidadDTO especialidadDTO : medicoDTO.getEspecialidades()) {
+            Long especialidadId = especialidadDTO.getId();
+
+            if (especialidadIds.contains(especialidadId)) {
+                throw new BusinessException(ErrorCodeEnum.MEDICO_ESPECIALIDADES_DUPLICADAS);
+            }
+
+            especialidadIds.add(especialidadId);
         }
 
         // Validar y obtener especialidades

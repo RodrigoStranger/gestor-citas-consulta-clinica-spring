@@ -5,7 +5,7 @@ import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.Va
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Data
 public class MedicoDTO {
@@ -35,5 +35,5 @@ public class MedicoDTO {
     private LocalDate fechaNacimiento;
 
     @NotEmpty(message = "El médico debe tener al menos una especialidad")
-    private Set<EspecialidadDTO> especialidades;
+    private List<EspecialidadDTO> especialidades;
 }
