@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "medicos")
+@Table(name = "medico")
 @Getter
 @Setter
 public class Medico {
@@ -18,33 +18,19 @@ public class Medico {
     @Column(name = "id_medico")
     private Long id;
 
-    @Column(name = "dni")
-    private String dni;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+    private Usuario usuario;
 
-    @Column(name = "clave")
-    @JsonIgnore
-    private String clave;
-
-    @Column(name = "nombre")
-    private String nombre;
-
-    @Column(name = "apellidos")
-    private String apellidos;
-
-    @Column(name = "correo")
-    private String correo;
-
-    @Column(name = "fecha_nacimiento")
-    private LocalDate fechaNacimiento;
+    @Column(name = "numero_colegiado")
+    private String numeroColegiado;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "medicos_especialidades",
+        name = "medico_especialidad",
         joinColumns = @JoinColumn(name = "id_medico"),
         inverseJoinColumns = @JoinColumn(name = "id_especialidad")
     )
     private Set<Especialidad> especialidades = new HashSet<>();
 
-    @Column(name = "activo")
-    private int activo = 1;
 }
