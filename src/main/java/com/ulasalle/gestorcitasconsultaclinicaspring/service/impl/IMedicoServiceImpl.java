@@ -2,6 +2,7 @@ package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.EspecialidadDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.RolDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.*;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IEspecialidadJPARepository;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IMedicoJPARepository;
@@ -41,6 +42,16 @@ public class IMedicoServiceImpl implements IMedicoService {
 
     @Override
     public Medico crearMedico(MedicoDTO medicoDTO) {
+        validarUsuarioDTO(medicoDTO);
+        validarEspecialidadesDTO(medicoDTO.getEspecialidades());
+        Rol rolMedico = obtenerRolMedicoDesdeDTO();
+        Usuario usuario = crearUsuarioDesdeDTO(medicoDTO, rolMedico);
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        Medico medico = crearMedicoDesdeDTO(medicoDTO, usuarioGuardado);
+        return medicoRepository.save(medico);
+    }
+
+    private void validarUsuarioDTO(MedicoDTO medicoDTO) {
         if (usuarioRepository.existsByDni(medicoDTO.getDni())) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_DNI_EN_USO);
         }
@@ -64,22 +75,20 @@ public class IMedicoServiceImpl implements IMedicoService {
                 !medicoDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_FECHA_NACIMIENTO_INVALIDA);
         }
+    }
+
+    private void validarEspecialidadesDTO(List<EspecialidadDTO> especialidadesDTO) {
         List<Long> especialidadIds = new ArrayList<>();
-        for (EspecialidadDTO especialidadDTO : medicoDTO.getEspecialidades()) {
+        for (EspecialidadDTO especialidadDTO : especialidadesDTO) {
             Long especialidadId = especialidadDTO.getId();
             if (especialidadIds.contains(especialidadId)) {
                 throw new BusinessException(ErrorCodeEnum.MEDICO_ESPECIALIDADES_DUPLICADAS);
             }
             especialidadIds.add(especialidadId);
         }
-        Set<Especialidad> especialidades = new HashSet<>();
-        for (EspecialidadDTO especialidadDTO : medicoDTO.getEspecialidades()) {
-            Especialidad especialidad = especialidadRepository.findById(especialidadDTO.getId())
-                .orElseThrow(() -> new BusinessException(ErrorCodeEnum.ESPECIALIDAD_NO_ENCONTRADA));
-            especialidades.add(especialidad);
-        }
-        Rol rolMedico = rolRepository.findByNombre(TipoRol.MEDICO)
-            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.ROL_NO_ENCONTRADO));
+    }
+
+    private Usuario crearUsuarioDesdeDTO(MedicoDTO medicoDTO, Rol rolMedico) {
         Usuario usuario = new Usuario();
         usuario.setDni(medicoDTO.getDni());
         usuario.setClave(medicoDTO.getClave());
@@ -88,11 +97,33 @@ public class IMedicoServiceImpl implements IMedicoService {
         usuario.setCorreo(medicoDTO.getCorreo());
         usuario.setFechaNacimiento(medicoDTO.getFechaNacimiento());
         usuario.getRoles().add(rolMedico);
-        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        return usuario;
+    }
+
+    private Rol obtenerRolMedicoDesdeDTO() {
+        RolDTO rolDTO = new RolDTO();
+        rolDTO.setNombre(TipoRol.MEDICO);
+        return rolRepository.findByNombre(rolDTO.getNombre())
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.ROL_NO_ENCONTRADO));
+    }
+
+    private Medico crearMedicoDesdeDTO(MedicoDTO medicoDTO, Usuario usuario) {
         Medico medico = new Medico();
-        medico.setUsuario(usuarioGuardado);
+        medico.setUsuario(usuario);
+        Set<Especialidad> especialidades = convertirEspecialidadesDTO(medicoDTO.getEspecialidades());
         medico.setEspecialidades(especialidades);
-        return medicoRepository.save(medico);
+
+        return medico;
+    }
+
+    private Set<Especialidad> convertirEspecialidadesDTO(List<EspecialidadDTO> especialidadesDTO) {
+        Set<Especialidad> especialidades = new HashSet<>();
+        for (EspecialidadDTO especialidadDTO : especialidadesDTO) {
+            Especialidad especialidad = especialidadRepository.findById(especialidadDTO.getId())
+                .orElseThrow(() -> new BusinessException(ErrorCodeEnum.ESPECIALIDAD_NO_ENCONTRADA));
+            especialidades.add(especialidad);
+        }
+        return especialidades;
     }
 
     @Override

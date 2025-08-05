@@ -1,6 +1,4 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto;
-
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
