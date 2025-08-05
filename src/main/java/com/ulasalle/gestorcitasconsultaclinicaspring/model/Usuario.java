@@ -39,7 +39,7 @@ public class Usuario {
     private LocalDate fechaNacimiento;
 
     @Column(name = "activo")
-    private int activo = 1;
+    private int activo;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
