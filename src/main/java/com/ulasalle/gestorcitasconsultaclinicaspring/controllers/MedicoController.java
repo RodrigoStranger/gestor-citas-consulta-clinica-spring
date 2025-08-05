@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,5 +34,25 @@ public class MedicoController {
         response.put("data", medicoCreado);
         response.put("status", "201");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    @GetMapping("/habilitados")
+    public ResponseEntity<Map<String, Object>> listarMedicosHabilitados() {
+        List<Medico> medicos = medicoService.listarMedicosHabilitados();
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Médicos habilitados obtenidos satisfactoriamente");
+        response.put("data", medicos);
+        response.put("total", medicos.size());
+        response.put("status", "200");
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/deshabilitados")
+    public ResponseEntity<Map<String, Object>> listarMedicosDeshabilitados() {
+        List<Medico> medicos = medicoService.listarMedicosDeshabilitados();
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Médicos deshabilitados obtenidos satisfactoriamente");
+        response.put("data", medicos);
+        response.put("total", medicos.size());
+        response.put("status", "200");
+        return ResponseEntity.ok(response);
     }
 }

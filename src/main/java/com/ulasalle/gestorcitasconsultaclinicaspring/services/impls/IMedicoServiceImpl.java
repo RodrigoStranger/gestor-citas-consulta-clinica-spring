@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @Transactional
@@ -53,5 +54,13 @@ public class IMedicoServiceImpl implements IMedicoService {
         medico.setFechaNacimiento(medicoDTO.getFechaNacimiento());
         medico.setEspecialidad(medicoDTO.getEspecialidad());
         return medicoRepository.save(medico);
+    }
+    @Override
+    public List<Medico> listarMedicosHabilitados() {
+        return medicoRepository.findByActivo(1);
+    }
+    @Override
+    public List<Medico> listarMedicosDeshabilitados() {
+        return medicoRepository.findByActivo(0);
     }
 }

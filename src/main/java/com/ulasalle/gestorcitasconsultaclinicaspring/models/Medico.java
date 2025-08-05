@@ -1,5 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class Medico {
     private String dni;
 
     @Column(name = "clave")
+    @JsonIgnore
     private String clave;
 
     @Column(name = "nombre")
@@ -38,5 +40,4 @@ public class Medico {
 
     @Column(name = "activo")
     private int activo = 1;
-
 }
