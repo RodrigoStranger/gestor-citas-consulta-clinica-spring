@@ -14,7 +14,7 @@ public class MedicoDTO {
     private String dni;
 
     @NotBlank(message = "La clave de acceso es obligatoria")
-    private String claveAcceso;
+    private String clave;
 
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;

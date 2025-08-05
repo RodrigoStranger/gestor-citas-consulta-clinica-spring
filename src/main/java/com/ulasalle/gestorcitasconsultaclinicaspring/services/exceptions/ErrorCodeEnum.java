@@ -5,11 +5,11 @@ import lombok.Getter;
 @Getter
 public enum ErrorCodeEnum {
 
-    MEDICO_NOMBRE_EN_USO("MED_001", "El nombre del médico ya se encuentra en uso."),
-    MEDICO_DNI_EN_USO("MED_002", "El Dni del médico ya se encuentra en uso."),
-    MEDICO_CORREO_EN_USO("MED_003", "El correo del médico ya se encuentra en uso."),
+    MEDICO_NOMBRE_EN_USO("MED_001", "El nombre del médico ya se encuentra en uso por otro medico."),
+    MEDICO_DNI_EN_USO("MED_002", "El Dni del médico ya se encuentra en uso por otro medico."),
+    MEDICO_CORREO_EN_USO("MED_003", "El correo del médico ya se encuentra en uso por otro medico."),
     MEDICO_FECHA_NACIMIENTO_INVALIDA("MED_004", "La fecha de nacimiento del médico no es válida."),
-    MEDICO_APELLIDOS_EN_USO("MED_005", "Los apellidos del médico ya se encuentran en uso.");
+    MEDICO_APELLIDOS_EN_USO("MED_005", "Los apellidos del médico ya se encuentran en uso por otro medico.");
 
     private final String code;
     private final String message;

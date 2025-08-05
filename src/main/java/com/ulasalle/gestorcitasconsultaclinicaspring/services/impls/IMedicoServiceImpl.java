@@ -23,24 +23,23 @@ public class IMedicoServiceImpl implements IMedicoService {
 
     @Override
     public Medico crearMedico(MedicoDTO medicoDTO) {
-        String nombreNormalizado = TextNormalizationUtils.normalizeText(medicoDTO.getNombre());
-        String apellidosNormalizado = TextNormalizationUtils.normalizeText(medicoDTO.getApellidos());
+        String nombreCompleto = TextNormalizationUtils.normalizeText(
+            medicoDTO.getNombre() + " " + medicoDTO.getApellidos()
+        );
 
-        // Verificar si ya existe un médico con el mismo nombre normalizado
-        boolean nombreExiste = medicoRepository.findAll().stream()
-                .anyMatch(medico -> TextNormalizationUtils.normalizeText(medico.getNombre()).equals(nombreNormalizado));
+        // Verificar si ya existe un médico con el mismo nombre completo normalizado
+        boolean nombreCompletoExiste = medicoRepository.findAll().stream()
+                .anyMatch(medico -> {
+                    String nombreCompletoExistente = TextNormalizationUtils.normalizeText(
+                        medico.getNombre() + " " + medico.getApellidos()
+                    );
+                    return nombreCompletoExistente.equals(nombreCompleto);
+                });
 
-        if (nombreExiste) {
+        if (nombreCompletoExiste) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_NOMBRE_EN_USO);
         }
 
-        // Verificar si ya existe un médico con los mismos apellidos normalizados
-        boolean apellidosExiste = medicoRepository.findAll().stream()
-                .anyMatch(medico -> TextNormalizationUtils.normalizeText(medico.getApellidos()).equals(apellidosNormalizado));
-
-        if (apellidosExiste) {
-            throw new BusinessException(ErrorCodeEnum.MEDICO_APELLIDOS_EN_USO);
-        }
         if (medicoRepository.existsByDni(medicoDTO.getDni())) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_DNI_EN_USO);
         }
