@@ -44,4 +44,11 @@ public class MedicoController {
         ResponseWrapper<List<Medico>> response = ResponseWrapper.success(medicos, "Médicos deshabilitados obtenidos exitosamente");
         return response.toResponseEntity();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarMedicoPorId(@PathVariable Long id) {
+        Medico medico = medicoService.obtenerMedicoPorId(id);
+        ResponseWrapper<Medico> response = ResponseWrapper.success(medico, "Médico encontrado exitosamente");
+        return response.toResponseEntity();
+    }
 }

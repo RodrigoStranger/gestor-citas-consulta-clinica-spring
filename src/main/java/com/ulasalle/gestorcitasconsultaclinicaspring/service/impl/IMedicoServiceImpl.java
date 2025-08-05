@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -102,5 +103,16 @@ public class IMedicoServiceImpl implements IMedicoService {
     @Override
     public List<Medico> listarMedicosDeshabilitados() {
         return medicoRepository.findMedicosDeshabilitados();
+    }
+
+    @Override
+    public Optional<Medico> buscarMedicoPorId(Long id) {
+        return medicoRepository.findById(id);
+    }
+
+    @Override
+    public Medico obtenerMedicoPorId(Long id) {
+        return medicoRepository.findById(id)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
     }
 }

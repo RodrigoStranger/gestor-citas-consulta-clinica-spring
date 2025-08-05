@@ -11,6 +11,7 @@ public enum ErrorCodeEnum {
     USUARIO_FECHA_NACIMIENTO_INVALIDA("USR_004", "La fecha de nacimiento del usuario no es válida."),
 
     MEDICO_ESPECIALIDADES_DUPLICADAS("MED_001", "No se pueden agregar especialidades duplicadas para el mismo médico."),
+    MEDICO_NO_ENCONTRADO("MED_002", "El médico especificado no fue encontrado."),
 
     ESPECIALIDAD_NO_ENCONTRADA("ESP_001", "La especialidad especificada no fue encontrada."),
     ESPECIALIDAD_NOMBRE_EN_USO("ESP_002", "El nombre de la especialidad ya se encuentra en uso."),

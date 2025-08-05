@@ -9,38 +9,27 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DataInitializer {
-
     @Bean
     ApplicationRunner initRoles(IRolJPARepository rolRepository) {
         return args -> {
-            // Verificar y crear rol ADMIN si no existe
-            if (!rolRepository.findByNombre(TipoRol.ADMIN).isPresent()) {
+            if (rolRepository.findByNombre(TipoRol.ADMIN).isEmpty()) {
                 Rol rolAdmin = new Rol();
                 rolAdmin.setNombre(TipoRol.ADMIN);
                 rolAdmin.setDescripcion(TipoRol.ADMIN.getDescripcion());
                 rolRepository.save(rolAdmin);
-                System.out.println("Rol ADMIN creado automáticamente");
             }
-
-            // Verificar y crear rol MEDICO si no existe
-            if (!rolRepository.findByNombre(TipoRol.MEDICO).isPresent()) {
+            if (rolRepository.findByNombre(TipoRol.MEDICO).isEmpty()) {
                 Rol rolMedico = new Rol();
                 rolMedico.setNombre(TipoRol.MEDICO);
                 rolMedico.setDescripcion(TipoRol.MEDICO.getDescripcion());
                 rolRepository.save(rolMedico);
-                System.out.println("Rol MEDICO creado automáticamente");
             }
-
-            // Verificar y crear rol PACIENTE si no existe
-            if (!rolRepository.findByNombre(TipoRol.PACIENTE).isPresent()) {
+            if (rolRepository.findByNombre(TipoRol.PACIENTE).isEmpty()) {
                 Rol rolPaciente = new Rol();
                 rolPaciente.setNombre(TipoRol.PACIENTE);
                 rolPaciente.setDescripcion(TipoRol.PACIENTE.getDescripcion());
                 rolRepository.save(rolPaciente);
-                System.out.println("Rol PACIENTE creado automáticamente");
             }
-
-            System.out.println("Inicialización de roles completada");
         };
     }
 }
