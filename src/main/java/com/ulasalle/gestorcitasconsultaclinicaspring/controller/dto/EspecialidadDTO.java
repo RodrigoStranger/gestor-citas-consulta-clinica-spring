@@ -1,6 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidApellidoNombre;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidTexts;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -9,9 +9,10 @@ public class EspecialidadDTO {
     private Long id;
 
     @NotBlank(message = "El nombre es obligatorio")
-    @ValidApellidoNombre
+    @ValidTexts
     private String nombre;
 
     @NotBlank(message = "La descripcion es obligatoria")
+    @ValidTexts
     private String descripcion;
 }

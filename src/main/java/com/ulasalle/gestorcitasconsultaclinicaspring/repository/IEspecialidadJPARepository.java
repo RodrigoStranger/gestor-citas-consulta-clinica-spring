@@ -12,4 +12,6 @@ public interface IEspecialidadJPARepository extends JpaRepository<Especialidad, 
     Optional<Especialidad> findByNombre(String nombre);
 
     boolean existsByNombre(String nombre);
+
+    boolean existsByDescripcion(String descripcion);
 }

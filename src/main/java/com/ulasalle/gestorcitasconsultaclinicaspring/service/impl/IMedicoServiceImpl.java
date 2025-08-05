@@ -57,7 +57,6 @@ public class IMedicoServiceImpl implements IMedicoService {
             throw new BusinessException(ErrorCodeEnum.MEDICO_FECHA_NACIMIENTO_INVALIDA);
         }
 
-        // Validar que no haya especialidades duplicadas
         List<Long> especialidadIds = new ArrayList<>();
         for (EspecialidadDTO especialidadDTO : medicoDTO.getEspecialidades()) {
             Long especialidadId = especialidadDTO.getId();
@@ -68,8 +67,6 @@ public class IMedicoServiceImpl implements IMedicoService {
 
             especialidadIds.add(especialidadId);
         }
-
-        // Validar y obtener especialidades
         Set<Especialidad> especialidades = new HashSet<>();
         for (EspecialidadDTO especialidadDTO : medicoDTO.getEspecialidades()) {
             Especialidad especialidad = especialidadRepository.findById(especialidadDTO.getId())

@@ -1,7 +1,7 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidDni;
-import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidApellidoNombre;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidTexts;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.time.LocalDate;
@@ -19,11 +19,11 @@ public class MedicoDTO {
     private String clave;
 
     @NotBlank(message = "El nombre es obligatorio")
-    @ValidApellidoNombre
+    @ValidTexts
     private String nombre;
 
     @NotBlank(message = "El apellido es obligatorio")
-    @ValidApellidoNombre
+    @ValidTexts
     private String apellidos;
 
     @Email(message = "El formato del correo no es válido")
