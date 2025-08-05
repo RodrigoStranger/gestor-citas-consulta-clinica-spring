@@ -128,22 +128,83 @@ public class IMedicoServiceImpl implements IMedicoService {
 
     @Override
     public List<Medico> listarMedicosHabilitados() {
-        return medicoRepository.findMedicosHabilitados();
+        return medicoRepository.findByUsuarioActivo(1);
     }
 
     @Override
     public List<Medico> listarMedicosDeshabilitados() {
-        return medicoRepository.findMedicosDeshabilitados();
+        return medicoRepository.findByUsuarioActivo(0);
     }
 
-    @Override
-    public Optional<Medico> buscarMedicoPorId(Long id) {
-        return medicoRepository.findById(id);
-    }
 
     @Override
     public Medico obtenerMedicoPorId(Long id) {
         return medicoRepository.findById(id)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
+    }
+
+    public Medico cambiarEstadoMedico(Long id, int nuevoEstado) {
+        if (!EstadoUsuario.esValido(nuevoEstado)) {
+            throw new BusinessException(ErrorCodeEnum.MEDICO_ESTADO_INVALIDO);
+        }
+        Medico medico = medicoRepository.findById(id)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
+        Usuario usuario = medico.getUsuario();
+        usuario.setActivo(nuevoEstado);
+        usuarioRepository.save(usuario);
+
+        return medico;
+    }
+
+    public Medico actualizarMedico(Long id, MedicoDTO medicoDTO) {
+        Medico medicoExistente = medicoRepository.findById(id)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
+        Usuario usuarioExistente = medicoExistente.getUsuario();
+        validarUsuarioDTOParaActualizacion(medicoDTO, usuarioExistente.getId());
+        validarEspecialidadesDTO(medicoDTO.getEspecialidades());
+        actualizarUsuarioDesdeDTO(usuarioExistente, medicoDTO);
+        usuarioRepository.save(usuarioExistente);
+        Set<Especialidad> nuevasEspecialidades = convertirEspecialidadesDTO(medicoDTO.getEspecialidades());
+        medicoExistente.setEspecialidades(nuevasEspecialidades);
+
+        return medicoRepository.save(medicoExistente);
+    }
+
+    private void validarUsuarioDTOParaActualizacion(MedicoDTO medicoDTO, Long usuarioId) {
+        if (usuarioRepository.existsByDniAndIdNot(medicoDTO.getDni(), usuarioId)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_DNI_EN_USO);
+        }
+        if (usuarioRepository.existsByCorreoAndIdNot(medicoDTO.getCorreo(), usuarioId)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
+        }
+        String nombreCompleto = TextNormalizationUtils.normalizeText(
+            medicoDTO.getNombre() + " " + medicoDTO.getApellidos()
+        );
+        boolean nombreCompletoExiste = usuarioRepository.findAll().stream()
+                .filter(usuario -> !usuario.getId().equals(usuarioId))
+                .anyMatch(usuario -> {
+                    String nombreCompletoExistente = TextNormalizationUtils.normalizeText(
+                        usuario.getNombre() + " " + usuario.getApellidos()
+                    );
+                    return nombreCompletoExistente.equals(nombreCompleto);
+                });
+        if (nombreCompletoExiste) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NOMBRE_EN_USO);
+        }
+        if (medicoDTO.getFechaNacimiento() != null &&
+                !medicoDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_FECHA_NACIMIENTO_INVALIDA);
+        }
+    }
+
+    private void actualizarUsuarioDesdeDTO(Usuario usuario, MedicoDTO medicoDTO) {
+        usuario.setDni(medicoDTO.getDni());
+        usuario.setNombre(medicoDTO.getNombre());
+        usuario.setApellidos(medicoDTO.getApellidos());
+        usuario.setCorreo(medicoDTO.getCorreo());
+        usuario.setFechaNacimiento(medicoDTO.getFechaNacimiento());
+        if (medicoDTO.getClave() != null && !medicoDTO.getClave().trim().isEmpty()) {
+            usuario.setClave(medicoDTO.getClave());
+        }
     }
 }

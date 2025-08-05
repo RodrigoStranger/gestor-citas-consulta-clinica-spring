@@ -28,6 +28,9 @@ public class Especialidad {
     @Column(name = "descripcion")
     private String descripcion;
 
+    @Column(name = "activa")
+    private int activa = 1;
+
     @Column(name = "fecha_registro")
     private LocalDate fechaRegistro;
     @PrePersist

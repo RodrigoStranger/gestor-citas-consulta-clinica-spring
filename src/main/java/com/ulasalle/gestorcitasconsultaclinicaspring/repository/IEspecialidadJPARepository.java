@@ -4,14 +4,8 @@ import com.ulasalle.gestorcitasconsultaclinicaspring.model.Especialidad;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
 public interface IEspecialidadJPARepository extends JpaRepository<Especialidad, Long> {
-
-    Optional<Especialidad> findByNombre(String nombre);
-
-    boolean existsByNombre(String nombre);
-
-    boolean existsByDescripcion(String descripcion);
+    // Solo mantener la funcionalidad básica de JpaRepository
+    // Spring Data JPA provee automáticamente: findById, findAll, save, delete, etc.
 }

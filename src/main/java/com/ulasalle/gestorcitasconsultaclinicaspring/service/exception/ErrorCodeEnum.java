@@ -12,6 +12,7 @@ public enum ErrorCodeEnum {
 
     MEDICO_ESPECIALIDADES_DUPLICADAS("MED_001", "No se pueden agregar especialidades duplicadas para el mismo médico."),
     MEDICO_NO_ENCONTRADO("MED_002", "El médico especificado no fue encontrado."),
+    MEDICO_ESTADO_INVALIDO("MED_003", "El estado del médico debe ser 0 (inactivo) o 1 (activo)."),
 
     RUTA_NO_ENCONTRADA("SYS_001", "Endpoint no existente o no disponible."),
 
