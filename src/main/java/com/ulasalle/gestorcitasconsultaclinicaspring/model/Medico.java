@@ -22,9 +22,6 @@ public class Medico {
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     private Usuario usuario;
 
-    @Column(name = "numero_colegiado")
-    private String numeroColegiado;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "medico_especialidad",
