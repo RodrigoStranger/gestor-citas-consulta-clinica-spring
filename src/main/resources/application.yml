@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: gestorcitasconsultaclinicaspring
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: rodrigo73714089ubnt
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
