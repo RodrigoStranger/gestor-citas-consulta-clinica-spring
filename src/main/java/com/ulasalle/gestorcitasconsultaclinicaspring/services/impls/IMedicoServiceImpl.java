@@ -16,9 +16,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Transactional
 public class IMedicoServiceImpl implements IMedicoService {
-
     private final IMedicoJPARepository medicoRepository;
-
     @Override
     public Medico crearMedico(MedicoDTO medicoDTO) {
         if (medicoRepository.existsByNombre(medicoDTO.getNombre())) {
