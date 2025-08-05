@@ -3,6 +3,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +25,15 @@ public class Especialidad {
     @Column(name = "descripcion")
     private String descripcion;
 
+    @Column(name = "fecha_registro")
+    private LocalDate fechaRegistro;
+    @PrePersist
+    protected void onCreate() {
+        fechaRegistro = LocalDate.now();
+    }
+
     @ManyToMany(mappedBy = "especialidades", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Medico> medicos = new HashSet<>();
+
 }

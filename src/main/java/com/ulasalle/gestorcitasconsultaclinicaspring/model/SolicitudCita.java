@@ -1,6 +1,5 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.model;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,4 +31,8 @@ public class SolicitudCita {
 
     @Column(name = "fecha_registro")
     private LocalDate fechaRegistro;
+    @PrePersist
+    protected void onCreate() {
+        fechaRegistro = LocalDate.now();
+    }
 }

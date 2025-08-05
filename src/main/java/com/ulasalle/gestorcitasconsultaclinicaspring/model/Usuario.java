@@ -1,6 +1,7 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,11 +39,15 @@ public class Usuario {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
-    @Column(name = "fecha_registro")
-    private LocalDate fechaRegistro;
-
     @Column(name = "activo")
     private int activo = 1;
+
+    @Column(name = "fecha_registro")
+    private LocalDate fechaRegistro;
+    @PrePersist
+    protected void onCreate() {
+        fechaRegistro = LocalDate.now();
+    }
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
