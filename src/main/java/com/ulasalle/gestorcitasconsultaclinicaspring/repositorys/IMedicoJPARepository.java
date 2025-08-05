@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface IMedicoJPARepository extends JpaRepository<Medico, Long> {
     boolean existsByNombre(String nombre);
-    boolean existsByCodigoMedico(String codigoMedico);
+    boolean existsByDni(String dni);
     boolean existsByCorreo(String correo);
 }
