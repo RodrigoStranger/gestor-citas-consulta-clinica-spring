@@ -1,8 +1,8 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.controllers;
+package com.ulasalle.gestorcitasconsultaclinicaspring.controller;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.controllers.dtos.MedicoDTO;
-import com.ulasalle.gestorcitasconsultaclinicaspring.models.Medico;
-import com.ulasalle.gestorcitasconsultaclinicaspring.services.IMedicoService;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dtos.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
+import com.ulasalle.gestorcitasconsultaclinicaspring.service.IMedicoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.services.exceptions;
+package com.ulasalle.gestorcitasconsultaclinicaspring.service.exception;
 
 import lombok.Getter;
 

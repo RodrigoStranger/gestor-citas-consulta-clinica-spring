@@ -1,4 +1,4 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.services.utils;
+package com.ulasalle.gestorcitasconsultaclinicaspring.service.util;
 
 import java.text.Normalizer;
 

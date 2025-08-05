@@ -1,4 +1,4 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.models;
+package com.ulasalle.gestorcitasconsultaclinicaspring.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

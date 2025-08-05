@@ -1,4 +1,4 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.controllers;
+package com.ulasalle.gestorcitasconsultaclinicaspring.controller;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

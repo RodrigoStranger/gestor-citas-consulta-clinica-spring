@@ -1,12 +1,12 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.services.impls;
+package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.controllers.dtos.MedicoDTO;
-import com.ulasalle.gestorcitasconsultaclinicaspring.models.Medico;
-import com.ulasalle.gestorcitasconsultaclinicaspring.repositorys.IMedicoJPARepository;
-import com.ulasalle.gestorcitasconsultaclinicaspring.services.IMedicoService;
-import com.ulasalle.gestorcitasconsultaclinicaspring.services.exceptions.BusinessException;
-import com.ulasalle.gestorcitasconsultaclinicaspring.services.exceptions.ErrorCodeEnum;
-import com.ulasalle.gestorcitasconsultaclinicaspring.services.utils.TextNormalizationUtils;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dtos.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
+import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IMedicoJPARepository;
+import com.ulasalle.gestorcitasconsultaclinicaspring.service.IMedicoService;
+import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.BusinessException;
+import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.ErrorCodeEnum;
+import com.ulasalle.gestorcitasconsultaclinicaspring.service.util.TextNormalizationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

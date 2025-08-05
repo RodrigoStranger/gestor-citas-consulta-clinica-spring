@@ -1,6 +1,6 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.repositorys;
+package com.ulasalle.gestorcitasconsultaclinicaspring.repository;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.models.Medico;
+import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

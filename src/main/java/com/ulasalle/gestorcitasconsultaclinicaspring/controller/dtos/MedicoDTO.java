@@ -1,6 +1,6 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.controllers.dtos;
+package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dtos;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.controllers.dtos.validators.ValidDni;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dtos.validator.ValidDni;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.time.LocalDate;

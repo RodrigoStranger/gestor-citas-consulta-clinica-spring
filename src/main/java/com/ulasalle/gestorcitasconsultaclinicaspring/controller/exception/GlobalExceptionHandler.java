@@ -1,7 +1,7 @@
-package com.ulasalle.gestorcitasconsultaclinicaspring.controllers.exceptions;
+package com.ulasalle.gestorcitasconsultaclinicaspring.controller.exception;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.services.exceptions.BusinessException;
-import com.ulasalle.gestorcitasconsultaclinicaspring.services.exceptions.ErrorCodeEnum;
+import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.BusinessException;
+import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.ErrorCodeEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
