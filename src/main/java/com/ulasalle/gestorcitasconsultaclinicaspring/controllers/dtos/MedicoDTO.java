@@ -1,9 +1,7 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controllers.dtos;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controllers.dtos.validators.ValidDni;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.time.LocalDate;
 
@@ -11,16 +9,17 @@ import java.time.LocalDate;
 public class MedicoDTO {
     private Long id;
 
-    @NotBlank(message = "El dni de un medico es obligatorio")
+    @NotBlank(message = "El dni es obligatorio")
+    @ValidDni
     private String dni;
 
-    @NotBlank(message = "La clave de acceso de un medico es obligatoria")
+    @NotBlank(message = "La clave de acceso es obligatoria")
     private String claveAcceso;
 
-    @NotBlank(message = "El nombre de un medico es obligatorio")
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @NotBlank(message = "El apellido de un medico es obligatorio")
+    @NotBlank(message = "El apellido es obligatorio")
     private String apellidos;
 
     @Email(message = "El formato del correo no es válido")
