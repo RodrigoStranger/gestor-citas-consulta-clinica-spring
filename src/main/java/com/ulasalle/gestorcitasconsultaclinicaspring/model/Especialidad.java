@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "especialidades")
+@Table(name = "especialidad")
 @Getter
 @Setter
 public class Especialidad {
@@ -25,7 +25,4 @@ public class Especialidad {
     @ManyToMany(mappedBy = "especialidades", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Medico> medicos = new HashSet<>();
-
-    @Column(name = "activa")
-    private int activa = 1;
 }

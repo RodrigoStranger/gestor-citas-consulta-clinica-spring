@@ -5,11 +5,10 @@ import lombok.Getter;
 @Getter
 public enum ErrorCodeEnum {
 
-    USUARIO_NOMBRE_EN_USO("USU_001", "El nombre del médico ya se encuentra en uso por otro usuario."),
-    USUARIO_DNI_EN_USO("USU_002", "El Dni del médico ya se encuentra en uso por otro usuario."),
-    USUARIO_CORREO_EN_USO("USU_003", "El correo del médico ya se encuentra en uso por otro usuario."),
-    USUARIO_FECHA_NACIMIENTO_INVALIDA("USU_004", "La fecha de nacimiento del usuario no es válida."),
-    USUARIO_APELLIDOS_EN_USO("USU_005", "Los apellidos del médico ya se encuentran en uso por otro usuario."),
+    USUARIO_NOMBRE_EN_USO("USR_001", "El nombre del usuario ya se encuentra en uso."),
+    USUARIO_DNI_EN_USO("USR_002", "El DNI del usuario ya se encuentra en uso."),
+    USUARIO_CORREO_EN_USO("USR_003", "El correo del usuario ya se encuentra en uso."),
+    USUARIO_FECHA_NACIMIENTO_INVALIDA("USR_004", "La fecha de nacimiento del usuario no es válida."),
 
     MEDICO_ESPECIALIDADES_DUPLICADAS("MED_001", "No se pueden agregar especialidades duplicadas para el mismo médico."),
 

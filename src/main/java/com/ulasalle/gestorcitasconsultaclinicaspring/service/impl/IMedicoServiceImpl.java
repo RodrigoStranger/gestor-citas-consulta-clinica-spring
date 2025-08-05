@@ -86,7 +86,6 @@ public class IMedicoServiceImpl implements IMedicoService {
         usuario.setApellidos(medicoDTO.getApellidos());
         usuario.setCorreo(medicoDTO.getCorreo());
         usuario.setFechaNacimiento(medicoDTO.getFechaNacimiento());
-        usuario.setActivo(1);
         usuario.getRoles().add(rolMedico);
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         Medico medico = new Medico();
@@ -94,13 +93,14 @@ public class IMedicoServiceImpl implements IMedicoService {
         medico.setEspecialidades(especialidades);
         return medicoRepository.save(medico);
     }
+
     @Override
     public List<Medico> listarMedicosHabilitados() {
-        return medicoRepository.findByActivo(1);
+        return medicoRepository.findMedicosHabilitados();
     }
 
     @Override
     public List<Medico> listarMedicosDeshabilitados() {
-        return medicoRepository.findByActivo(0);
+        return medicoRepository.findMedicosDeshabilitados();
     }
 }

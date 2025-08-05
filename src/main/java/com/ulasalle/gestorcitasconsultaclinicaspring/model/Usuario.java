@@ -38,12 +38,15 @@ public class Usuario {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
+    @Column(name = "fecha_registro")
+    private LocalDate fechaRegistro;
+
     @Column(name = "activo")
-    private int activo;
+    private int activo = 1;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "usuario_rol",
+        name = "usuario_roles",
         joinColumns = @JoinColumn(name = "id_usuario"),
         inverseJoinColumns = @JoinColumn(name = "id_rol")
     )
