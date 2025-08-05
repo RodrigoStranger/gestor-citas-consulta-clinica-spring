@@ -86,7 +86,7 @@ public class IMedicoServiceImpl implements IMedicoService {
         usuario.setApellidos(medicoDTO.getApellidos());
         usuario.setCorreo(medicoDTO.getCorreo());
         usuario.setFechaNacimiento(medicoDTO.getFechaNacimiento());
-        usuario.setActivo(1);
+        usuario.setActivo(true); // Corregido: era setActivo(1)
         usuario.getRoles().add(rolMedico);
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         Medico medico = new Medico();
