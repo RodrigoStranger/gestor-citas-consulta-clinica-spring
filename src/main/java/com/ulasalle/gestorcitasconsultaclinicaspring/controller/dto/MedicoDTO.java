@@ -1,9 +1,11 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidDni;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidApellidoNombre;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class MedicoDTO {
@@ -17,9 +19,11 @@ public class MedicoDTO {
     private String clave;
 
     @NotBlank(message = "El nombre es obligatorio")
+    @ValidApellidoNombre
     private String nombre;
 
     @NotBlank(message = "El apellido es obligatorio")
+    @ValidApellidoNombre
     private String apellidos;
 
     @Email(message = "El formato del correo no es válido")
@@ -30,6 +34,6 @@ public class MedicoDTO {
     @Past(message = "La fecha de nacimiento debe ser anterior a la fecha actual")
     private LocalDate fechaNacimiento;
 
-    @NotBlank(message = "La especialidad para un medico es obligatoria")
-    private String especialidad;
+    @NotEmpty(message = "El médico debe tener al menos una especialidad")
+    private Set<EspecialidadDTO> especialidades;
 }

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "medicos")
@@ -35,8 +37,13 @@ public class Medico {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
-    @Column(name = "especialidad")
-    private String especialidad;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "medicos_especialidades",
+        joinColumns = @JoinColumn(name = "id_medico"),
+        inverseJoinColumns = @JoinColumn(name = "id_especialidad")
+    )
+    private Set<Especialidad> especialidades = new HashSet<>();
 
     @Column(name = "activo")
     private int activo = 1;

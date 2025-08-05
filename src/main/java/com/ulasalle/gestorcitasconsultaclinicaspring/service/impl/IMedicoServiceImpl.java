@@ -1,7 +1,10 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.EspecialidadDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.model.Especialidad;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
+import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IEspecialidadJPARepository;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IMedicoJPARepository;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.IMedicoService;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.BusinessException;
@@ -11,15 +14,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
 public class IMedicoServiceImpl implements IMedicoService {
     private final IMedicoJPARepository medicoRepository;
-    public IMedicoServiceImpl(IMedicoJPARepository medicoRepository) {
+    private final IEspecialidadJPARepository especialidadRepository;
+
+    public IMedicoServiceImpl(IMedicoJPARepository medicoRepository,
+                             IEspecialidadJPARepository especialidadRepository) {
         this.medicoRepository = medicoRepository;
+        this.especialidadRepository = especialidadRepository;
     }
+
     @Override
     public Medico crearMedico(MedicoDTO medicoDTO) {
         String nombreCompleto = TextNormalizationUtils.normalizeText(
@@ -45,6 +55,15 @@ public class IMedicoServiceImpl implements IMedicoService {
                 !medicoDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_FECHA_NACIMIENTO_INVALIDA);
         }
+
+        // Validar y obtener especialidades
+        Set<Especialidad> especialidades = new HashSet<>();
+        for (EspecialidadDTO especialidadDTO : medicoDTO.getEspecialidades()) {
+            Especialidad especialidad = especialidadRepository.findById(especialidadDTO.getId())
+                .orElseThrow(() -> new BusinessException(ErrorCodeEnum.ESPECIALIDAD_NO_ENCONTRADA));
+            especialidades.add(especialidad);
+        }
+
         Medico medico = new Medico();
         medico.setDni(medicoDTO.getDni());
         medico.setClave(medicoDTO.getClave());
@@ -52,7 +71,8 @@ public class IMedicoServiceImpl implements IMedicoService {
         medico.setApellidos(medicoDTO.getApellidos());
         medico.setCorreo(medicoDTO.getCorreo());
         medico.setFechaNacimiento(medicoDTO.getFechaNacimiento());
-        medico.setEspecialidad(medicoDTO.getEspecialidad());
+        medico.setEspecialidades(especialidades);
+
         return medicoRepository.save(medico);
     }
     @Override

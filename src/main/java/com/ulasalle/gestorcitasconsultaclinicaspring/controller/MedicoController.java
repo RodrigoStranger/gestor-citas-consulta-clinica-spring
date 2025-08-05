@@ -16,9 +16,11 @@ import java.util.Map;
 @RequestMapping("/medicos")
 public class MedicoController {
     private final IMedicoService medicoService;
+
     public MedicoController(IMedicoService medicoService) {
         this.medicoService = medicoService;
     }
+
     @GetMapping("/salud")
     public ResponseEntity<Map<String, Object>> estado() {
         Map<String, Object> response = new HashMap<>();
@@ -26,6 +28,7 @@ public class MedicoController {
         response.put("status", "200");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
     @PostMapping
     public ResponseEntity<Map<String, Object>> crearMedico(@Valid @RequestBody MedicoDTO medicoDTO) {
         Medico medicoCreado = medicoService.crearMedico(medicoDTO);
@@ -35,6 +38,7 @@ public class MedicoController {
         response.put("status", "201");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
     @GetMapping("/habilitados")
     public ResponseEntity<Map<String, Object>> listarMedicosHabilitados() {
         List<Medico> medicos = medicoService.listarMedicosHabilitados();
@@ -45,6 +49,7 @@ public class MedicoController {
         response.put("status", "200");
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/deshabilitados")
     public ResponseEntity<Map<String, Object>> listarMedicosDeshabilitados() {
         List<Medico> medicos = medicoService.listarMedicosDeshabilitados();
