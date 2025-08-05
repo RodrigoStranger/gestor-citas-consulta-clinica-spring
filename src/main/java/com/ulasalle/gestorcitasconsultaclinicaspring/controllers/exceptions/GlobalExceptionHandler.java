@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 @RestControllerAdvice(
-        basePackages = "com.ulasalle.gestorcitasconsultaclinicaspring.controller"
+        basePackages = "com.ulasalle.gestorcitasconsultaclinicaspring.controllers"
 )
 public class GlobalExceptionHandler {
 
@@ -31,15 +31,6 @@ public class GlobalExceptionHandler {
                 .toResponseEntity();
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGeneralException(Exception exception) {
-        String message = exception.getMessage();
-        if (message != null && message.contains("JSON parse error")) {
-            message = "El cuerpo de la solicitud está mal formado";
-        }
-        return ResponseWrapper.error(message, HttpStatus.BAD_REQUEST.value()).toResponseEntity();
-    }
-
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<?> handleBusinessException(
             BusinessException exception
@@ -50,5 +41,14 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT.value(),
                 errorCode.getCode()
         ).toResponseEntity();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleGeneralException(Exception exception) {
+        String message = exception.getMessage();
+        if (message != null && message.contains("JSON parse error")) {
+            message = "El cuerpo de la solicitud está mal formado";
+        }
+        return ResponseWrapper.error(message, HttpStatus.INTERNAL_SERVER_ERROR.value()).toResponseEntity();
     }
 }

@@ -11,8 +11,8 @@ import java.time.LocalDate;
 public class MedicoDTO {
     private Long id;
 
-    @NotBlank(message = "El codigo de un medico es obligatorio")
-    private String coidigoMedico;
+    @NotBlank(message = "El dni de un medico es obligatorio")
+    private String dni;
 
     @NotBlank(message = "La clave de acceso de un medico es obligatoria")
     private String claveAcceso;
@@ -24,9 +24,11 @@ public class MedicoDTO {
     private String apellidos;
 
     @Email(message = "El formato del correo no es válido")
+    @NotBlank(message = "El correo es obligatorio")
     private String correo;
 
-    @NotBlank(message = "La fecha de nacimiento es obligatoria")
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
+    @Past(message = "La fecha de nacimiento debe ser anterior a la fecha actual")
     private LocalDate fechaNacimiento;
 
     @NotBlank(message = "La especialidad para un medico es obligatoria")

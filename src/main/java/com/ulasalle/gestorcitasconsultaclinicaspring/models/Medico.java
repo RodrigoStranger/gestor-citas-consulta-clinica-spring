@@ -15,8 +15,8 @@ public class Medico {
     @Column(name = "id_medico")
     private Long id;
 
-    @Column(name = "codigo_medico")
-    private String codigoMedico;
+    @Column(name = "dni")
+    private String dni;
 
     @Column(name = "clave_acceso")
     private String claveAcceso;

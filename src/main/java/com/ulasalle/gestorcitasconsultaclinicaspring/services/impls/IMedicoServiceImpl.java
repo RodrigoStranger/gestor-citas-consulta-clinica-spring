@@ -22,7 +22,7 @@ public class IMedicoServiceImpl implements IMedicoService {
         if (medicoRepository.existsByNombre(medicoDTO.getNombre())) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_NOMBRE_EN_USO);
         }
-        if (medicoRepository.existsByCodigoMedico(medicoDTO.getCoidigoMedico())) {
+        if (medicoRepository.existsByCodigoMedico(medicoDTO.getCodigoMedico())) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_CODIGO_EN_USO);
         }
         if (medicoRepository.existsByCorreo(medicoDTO.getCorreo())) {
@@ -33,7 +33,7 @@ public class IMedicoServiceImpl implements IMedicoService {
             throw new BusinessException(ErrorCodeEnum.MEDICO_FECHA_NACIMIENTO_INVALIDA);
         }
         Medico medico = new Medico();
-        medico.setCodigoMedico(medicoDTO.getCoidigoMedico());
+        medico.setCodigoMedico(medicoDTO.getCodigoMedico());
         medico.setClaveAcceso(medicoDTO.getClaveAcceso());
         medico.setNombre(medicoDTO.getNombre());
         medico.setApellidos(medicoDTO.getApellidos());
