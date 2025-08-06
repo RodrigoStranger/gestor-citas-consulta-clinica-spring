@@ -26,33 +26,25 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
     public Especialidad crearEspecialidad(EspecialidadDTO especialidadDTO) {
         String nombreNormalizado = TextNormalizationUtils.normalizeText(especialidadDTO.getNombre());
         String descripcionNormalizada = TextNormalizationUtils.normalizeText(especialidadDTO.getDescripcion());
-
-        // Verificar si ya existe una especialidad con el mismo nombre normalizado
         boolean nombreExiste = especialidadRepository.findAll().stream()
                 .anyMatch(especialidad -> {
                     String nombreExistente = TextNormalizationUtils.normalizeText(especialidad.getNombre());
                     return nombreExistente.equals(nombreNormalizado);
                 });
-
         if (nombreExiste) {
             throw new BusinessException(ErrorCodeEnum.ESPECIALIDAD_NOMBRE_EN_USO);
         }
-
-        // Verificar si ya existe una especialidad con la misma descripción normalizada
         boolean descripcionExiste = especialidadRepository.findAll().stream()
                 .anyMatch(especialidad -> {
                     String descripcionExistente = TextNormalizationUtils.normalizeText(especialidad.getDescripcion());
                     return descripcionExistente.equals(descripcionNormalizada);
                 });
-
         if (descripcionExiste) {
             throw new BusinessException(ErrorCodeEnum.ESPECIALIDAD_DESCRIPCION_EN_USO);
         }
-
         Especialidad especialidad = new Especialidad();
         especialidad.setNombre(especialidadDTO.getNombre());
         especialidad.setDescripcion(especialidadDTO.getDescripcion());
-
         return especialidadRepository.save(especialidad);
     }
 
@@ -70,11 +62,8 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
     @Override
     public Especialidad actualizarEspecialidad(Long id, EspecialidadDTO especialidadDTO) {
         Especialidad especialidad = buscarPorId(id);
-
         String nombreNormalizado = TextNormalizationUtils.normalizeText(especialidadDTO.getNombre());
         String descripcionNormalizada = TextNormalizationUtils.normalizeText(especialidadDTO.getDescripcion());
-
-        // Verificar nombre duplicado (excluyendo la especialidad actual)
         boolean nombreExiste = especialidadRepository.findAll().stream()
                 .filter(esp -> !esp.getId().equals(id))
                 .anyMatch(esp -> {
@@ -85,25 +74,19 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
         if (nombreExiste) {
             throw new BusinessException(ErrorCodeEnum.ESPECIALIDAD_NOMBRE_EN_USO);
         }
-
-        // Verificar descripción duplicada (excluyendo la especialidad actual)
         boolean descripcionExiste = especialidadRepository.findAll().stream()
                 .filter(esp -> !esp.getId().equals(id))
                 .anyMatch(esp -> {
                     String descripcionExistente = TextNormalizationUtils.normalizeText(esp.getDescripcion());
                     return descripcionExistente.equals(descripcionNormalizada);
                 });
-
         if (descripcionExiste) {
             throw new BusinessException(ErrorCodeEnum.ESPECIALIDAD_DESCRIPCION_EN_USO);
         }
-
         especialidad.setNombre(especialidadDTO.getNombre());
         especialidad.setDescripcion(especialidadDTO.getDescripcion());
-
         return especialidadRepository.save(especialidad);
     }
-
     @Override
     public void eliminarEspecialidad(Long id) {
         Especialidad especialidad = buscarPorId(id);
