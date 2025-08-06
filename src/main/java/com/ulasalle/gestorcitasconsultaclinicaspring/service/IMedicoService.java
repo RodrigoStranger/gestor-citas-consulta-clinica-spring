@@ -12,5 +12,6 @@ public interface IMedicoService {
     List<Medico> listarMedicosDeshabilitados();
     Medico obtenerMedicoPorId(Long id);
     Medico cambiarEstadoMedico(Long id, int nuevoEstado);
+    Medico actualizarMedico(Long idMedico, MedicoDTO medicoDTO);
     Set<String> obtenerTodasLasEspecialidades();
 }

@@ -86,6 +86,31 @@ public class IMedicoServiceImpl implements IMedicoService {
     }
 
     @Override
+    public Medico actualizarMedico(Long idMedico, MedicoDTO medicoDTO) {
+        // Validar que el médico existe
+        Medico medico = medicoRepository.findById(idMedico)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
+
+        // Validar la especialidad
+        validarEspecialidad(medicoDTO.getEspecialidad());
+
+        // Actualizar los datos del usuario asociado (correo, nombre, apellidos)
+        Usuario usuario = medico.getUsuario();
+        usuarioService.validarUsuarioParaActualizacion(usuario.getId_usuario(), medicoDTO);
+
+        usuario.setCorreo(medicoDTO.getCorreo());
+        usuario.setNombre(medicoDTO.getNombre());
+        usuario.setApellidos(medicoDTO.getApellidos());
+
+        // Actualizar la especialidad del médico
+        medico.setEspecialidad(medicoDTO.getEspecialidad());
+
+        // Guardar cambios
+        usuarioRepository.save(usuario);
+        return medicoRepository.save(medico);
+    }
+
+    @Override
     public Set<String> obtenerTodasLasEspecialidades() {
         List<Medico> medicos = medicoRepository.findAll();
         return new HashSet<>(medicos.stream()
