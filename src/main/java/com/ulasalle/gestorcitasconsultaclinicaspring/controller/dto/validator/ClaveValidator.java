@@ -14,8 +14,17 @@ public class ClaveValidator implements ConstraintValidator<ValidClave, String> {
             return true;
         }
         if (clave.contains(" ") || clave.contains(",")) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("La clave no puede contener espacios ni comas")
+                   .addConstraintViolation();
             return false;
         }
-        return clave.trim().length() >= 6;
+        if (clave.trim().length() < 6) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("La clave debe tener al menos 6 caracteres")
+                   .addConstraintViolation();
+            return false;
+        }
+        return true;
     }
 }
