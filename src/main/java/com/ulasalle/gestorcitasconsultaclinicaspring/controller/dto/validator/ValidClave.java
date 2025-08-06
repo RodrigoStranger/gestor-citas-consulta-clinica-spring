@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidClave {
-    String message() default "La clave debe tener al menos 6 caracteres";
+    String message() default "La clave debe tener al menos 6 caracteres y no puede contener espacios ni comas";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
