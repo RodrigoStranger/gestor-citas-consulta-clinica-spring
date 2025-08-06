@@ -4,6 +4,7 @@ import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IMedicoService {
     Medico crearMedico(MedicoDTO medicoDTO);
@@ -12,4 +13,5 @@ public interface IMedicoService {
     Medico obtenerMedicoPorId(Long id);
     Medico cambiarEstadoMedico(Long id, int nuevoEstado);
     Medico actualizarMedico(Long id, MedicoDTO medicoDTO);
+    Set<String> obtenerTodasLasEspecialidades();
 }

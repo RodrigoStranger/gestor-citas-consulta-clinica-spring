@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -151,5 +153,14 @@ public class IMedicoServiceImpl implements IMedicoService {
         usuario.setActivo(nuevoEstado);
         usuarioRepository.save(usuario);
         return medico;
+    }
+
+    @Override
+    public Set<String> obtenerTodasLasEspecialidades() {
+        List<Medico> medicos = medicoRepository.findAll();
+        return medicos.stream()
+                .map(Medico::getEspecialidad)
+                .filter(especialidad -> especialidad != null && !especialidad.trim().isEmpty())
+                .collect(Collectors.toSet());
     }
 }

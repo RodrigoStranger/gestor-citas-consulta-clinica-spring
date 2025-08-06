@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/medicos")
@@ -57,6 +58,13 @@ public class MedicoController {
         Medico medico = medicoService.cambiarEstadoMedico(id, estado);
         String mensaje = estado == 0 ? "Médico deshabilitado exitosamente" : "Médico habilitado exitosamente";
         ResponseWrapper<Medico> response = ResponseWrapper.success(medico, mensaje);
+        return response.toResponseEntity();
+    }
+
+    @GetMapping("/especialidades")
+    public ResponseEntity<?> obtenerTodasLasEspecialidades() {
+        Set<String> especialidades = medicoService.obtenerTodasLasEspecialidades();
+        ResponseWrapper<Set<String>> response = ResponseWrapper.success(especialidades, "Especialidades obtenidas exitosamente");
         return response.toResponseEntity();
     }
 
