@@ -57,19 +57,7 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         if (usuarioRepository.existsByCorreo(usuarioDTO.getCorreo())) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
         }
-        String nombreCompleto = TextNormalizationUtils.normalizeText(
-            usuarioDTO.getNombre() + " " + usuarioDTO.getApellidos()
-        );
-        boolean nombreCompletoExiste = usuarioRepository.findAll().stream()
-                .anyMatch(usuario -> {
-                    String nombreCompletoExistente = TextNormalizationUtils.normalizeText(
-                        usuario.getNombre() + " " + usuario.getApellidos()
-                    );
-                    return nombreCompletoExistente.equals(nombreCompleto);
-                });
-        if (nombreCompletoExiste) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_NOMBRE_EN_USO);
-        }
+        validarNombreCompletoUnico(usuarioDTO.getNombre(), usuarioDTO.getApellidos(), null);
         if (usuarioDTO.getFechaNacimiento() != null &&
                 !usuarioDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_FECHA_NACIMIENTO_INVALIDA);
@@ -134,25 +122,23 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         if (usuarioExistentePorCorreo != null && !usuarioExistentePorCorreo.getId_usuario().equals(idUsuario)) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
         }
-        String nombreCompleto = TextNormalizationUtils.normalizeText(
-            usuarioDTO.getNombre() + " " + usuarioDTO.getApellidos()
-        );
-        boolean nombreCompletoExiste = usuarioRepository.findAll().stream()
-                .anyMatch(usuario -> {
-                    if (usuario.getId_usuario().equals(idUsuario)) {
-                        return false;
-                    }
-                    String nombreCompletoExistente = TextNormalizationUtils.normalizeText(
-                        usuario.getNombre() + " " + usuario.getApellidos()
-                    );
-                    return nombreCompletoExistente.equals(nombreCompleto);
-                });
-        if (nombreCompletoExiste) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_NOMBRE_EN_USO);
-        }
+        validarNombreCompletoUnico(usuarioDTO.getNombre(), usuarioDTO.getApellidos(), idUsuario);
         if (usuarioDTO.getFechaNacimiento() != null &&
                 !usuarioDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_FECHA_NACIMIENTO_INVALIDA);
+        }
+    }
+
+    private void validarNombreCompletoUnico(String nombre, String apellidos, Long idUsuarioExcluir) {
+        String nombreCompleto = nombre + " " + apellidos;
+        boolean nombreCompletoExiste = usuarioRepository.findAll().stream()
+                .filter(usuario -> idUsuarioExcluir == null || !idUsuarioExcluir.equals(usuario.getId_usuario()))
+                .anyMatch(usuario -> {
+                    String nombreCompletoExistente = usuario.getNombre() + " " + usuario.getApellidos();
+                    return TextNormalizationUtils.normalizedEquals(nombreCompleto, nombreCompletoExistente);
+                });
+        if (nombreCompletoExiste) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NOMBRE_EN_USO);
         }
     }
 

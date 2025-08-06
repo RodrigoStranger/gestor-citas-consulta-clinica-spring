@@ -9,8 +9,10 @@ import com.ulasalle.gestorcitasconsultaclinicaspring.service.IMedicoService;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.IUsuarioService;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.BusinessException;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.ErrorCodeEnum;
+import com.ulasalle.gestorcitasconsultaclinicaspring.service.util.TextNormalizationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -86,9 +88,14 @@ public class IMedicoServiceImpl implements IMedicoService {
     @Override
     public Set<String> obtenerTodasLasEspecialidades() {
         List<Medico> medicos = medicoRepository.findAll();
-        return medicos.stream()
+        return new HashSet<>(medicos.stream()
                 .map(Medico::getEspecialidad)
                 .filter(especialidad -> especialidad != null && !especialidad.trim().isEmpty())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toMap(
+                    TextNormalizationUtils::normalizeText,
+                    especialidad -> especialidad,
+                    (existing, replacement) -> existing
+                ))
+                .values());
     }
 }

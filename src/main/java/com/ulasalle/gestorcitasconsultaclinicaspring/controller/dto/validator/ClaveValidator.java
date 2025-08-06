@@ -10,7 +10,9 @@ public class ClaveValidator implements ConstraintValidator<ValidClave, String> {
 
     @Override
     public boolean isValid(String clave, ConstraintValidatorContext context) {
-        if (clave == null) { return true; }
+        if (clave == null || clave.trim().isEmpty()) {
+            return true;
+        }
         return clave.trim().length() >= 6;
     }
 }
