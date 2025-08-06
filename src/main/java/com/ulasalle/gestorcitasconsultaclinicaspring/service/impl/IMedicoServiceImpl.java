@@ -1,10 +1,9 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.EspecialidadDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.RolDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.TextsValidator;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.*;
-import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IEspecialidadJPARepository;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IMedicoJPARepository;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IRolJPARepository;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IUsuarioJPARepository;
@@ -16,25 +15,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
 public class IMedicoServiceImpl implements IMedicoService {
     private final IMedicoJPARepository medicoRepository;
-    private final IEspecialidadJPARepository especialidadRepository;
     private final IUsuarioJPARepository usuarioRepository;
     private final IRolJPARepository rolRepository;
 
     public IMedicoServiceImpl(IMedicoJPARepository medicoRepository,
-                             IEspecialidadJPARepository especialidadRepository,
                              IUsuarioJPARepository usuarioRepository,
                              IRolJPARepository rolRepository) {
         this.medicoRepository = medicoRepository;
-        this.especialidadRepository = especialidadRepository;
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
     }
@@ -42,12 +35,33 @@ public class IMedicoServiceImpl implements IMedicoService {
     @Override
     public Medico crearMedico(MedicoDTO medicoDTO) {
         validarUsuarioDTO(medicoDTO);
-        validarEspecialidadesDTO(medicoDTO.getEspecialidades());
+        validarEspecialidad(medicoDTO.getEspecialidad());
         Rol rolMedico = obtenerRolMedicoDesdeDTO();
         Usuario usuario = crearUsuarioDesdeDTO(medicoDTO, rolMedico);
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         Medico medico = crearMedicoDesdeDTO(medicoDTO, usuarioGuardado);
         return medicoRepository.save(medico);
+    }
+
+    @Override
+    public Medico actualizarMedico(Long id, MedicoDTO medicoDTO) {
+        Medico medico = obtenerMedicoPorId(id);
+        validarEspecialidad(medicoDTO.getEspecialidad());
+        Usuario usuario = medico.getUsuario();
+        actualizarUsuarioDesdeDTO(usuario, medicoDTO);
+        usuarioRepository.save(usuario);
+        medico.setEspecialidad(medicoDTO.getEspecialidad());
+        return medicoRepository.save(medico);
+    }
+
+    private void actualizarUsuarioDesdeDTO(Usuario usuario, MedicoDTO medicoDTO) {
+        usuario.setNombre(medicoDTO.getNombre());
+        usuario.setApellidos(medicoDTO.getApellidos());
+        usuario.setCorreo(medicoDTO.getCorreo());
+        usuario.setFechaNacimiento(medicoDTO.getFechaNacimiento());
+        if (medicoDTO.getClave() != null && !medicoDTO.getClave().trim().isEmpty()) {
+            usuario.setClave(medicoDTO.getClave());
+        }
     }
 
     private void validarUsuarioDTO(MedicoDTO medicoDTO) {
@@ -76,14 +90,11 @@ public class IMedicoServiceImpl implements IMedicoService {
         }
     }
 
-    private void validarEspecialidadesDTO(List<EspecialidadDTO> especialidadesDTO) {
-        List<Long> especialidadIds = new ArrayList<>();
-        for (EspecialidadDTO especialidadDTO : especialidadesDTO) {
-            Long especialidadId = especialidadDTO.getId();
-            if (especialidadIds.contains(especialidadId)) {
-                throw new BusinessException(ErrorCodeEnum.MEDICO_ESPECIALIDADES_DUPLICADAS);
-            }
-            especialidadIds.add(especialidadId);
+    private void validarEspecialidad(String especialidad) {
+        TextsValidator validator = new TextsValidator();
+        validator.initialize(null);
+        if (!validator.isValid(especialidad, null)) {
+            throw new BusinessException(ErrorCodeEnum.MEDICO_ESPECIALIDAD_INVALIDA);
         }
     }
 
@@ -109,20 +120,8 @@ public class IMedicoServiceImpl implements IMedicoService {
     private Medico crearMedicoDesdeDTO(MedicoDTO medicoDTO, Usuario usuario) {
         Medico medico = new Medico();
         medico.setUsuario(usuario);
-        Set<Especialidad> especialidades = convertirEspecialidadesDTO(medicoDTO.getEspecialidades());
-        medico.setEspecialidades(especialidades);
-
+        medico.setEspecialidad(medicoDTO.getEspecialidad());
         return medico;
-    }
-
-    private Set<Especialidad> convertirEspecialidadesDTO(List<EspecialidadDTO> especialidadesDTO) {
-        Set<Especialidad> especialidades = new HashSet<>();
-        for (EspecialidadDTO especialidadDTO : especialidadesDTO) {
-            Especialidad especialidad = especialidadRepository.findById(especialidadDTO.getId())
-                .orElseThrow(() -> new BusinessException(ErrorCodeEnum.ESPECIALIDAD_NO_ENCONTRADA));
-            especialidades.add(especialidad);
-        }
-        return especialidades;
     }
 
     @Override
@@ -135,13 +134,13 @@ public class IMedicoServiceImpl implements IMedicoService {
         return medicoRepository.findByUsuarioActivo(0);
     }
 
-
     @Override
     public Medico obtenerMedicoPorId(Long id) {
         return medicoRepository.findById(id)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
     }
 
+    @Override
     public Medico cambiarEstadoMedico(Long id, int nuevoEstado) {
         if (!EstadoUsuario.esValido(nuevoEstado)) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_ESTADO_INVALIDO);
@@ -151,59 +150,6 @@ public class IMedicoServiceImpl implements IMedicoService {
         Usuario usuario = medico.getUsuario();
         usuario.setActivo(nuevoEstado);
         usuarioRepository.save(usuario);
-
         return medico;
-    }
-
-    public Medico actualizarMedico(Long id, MedicoDTO medicoDTO) {
-        Medico medicoExistente = medicoRepository.findById(id)
-            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
-        Usuario usuarioExistente = medicoExistente.getUsuario();
-        validarUsuarioDTOParaActualizacion(medicoDTO, usuarioExistente.getId());
-        validarEspecialidadesDTO(medicoDTO.getEspecialidades());
-        actualizarUsuarioDesdeDTO(usuarioExistente, medicoDTO);
-        usuarioRepository.save(usuarioExistente);
-        Set<Especialidad> nuevasEspecialidades = convertirEspecialidadesDTO(medicoDTO.getEspecialidades());
-        medicoExistente.setEspecialidades(nuevasEspecialidades);
-
-        return medicoRepository.save(medicoExistente);
-    }
-
-    private void validarUsuarioDTOParaActualizacion(MedicoDTO medicoDTO, Long usuarioId) {
-        if (usuarioRepository.existsByDniAndIdNot(medicoDTO.getDni(), usuarioId)) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_DNI_EN_USO);
-        }
-        if (usuarioRepository.existsByCorreoAndIdNot(medicoDTO.getCorreo(), usuarioId)) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
-        }
-        String nombreCompleto = TextNormalizationUtils.normalizeText(
-            medicoDTO.getNombre() + " " + medicoDTO.getApellidos()
-        );
-        boolean nombreCompletoExiste = usuarioRepository.findAll().stream()
-                .filter(usuario -> !usuario.getId().equals(usuarioId))
-                .anyMatch(usuario -> {
-                    String nombreCompletoExistente = TextNormalizationUtils.normalizeText(
-                        usuario.getNombre() + " " + usuario.getApellidos()
-                    );
-                    return nombreCompletoExistente.equals(nombreCompleto);
-                });
-        if (nombreCompletoExiste) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_NOMBRE_EN_USO);
-        }
-        if (medicoDTO.getFechaNacimiento() != null &&
-                !medicoDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_FECHA_NACIMIENTO_INVALIDA);
-        }
-    }
-
-    private void actualizarUsuarioDesdeDTO(Usuario usuario, MedicoDTO medicoDTO) {
-        usuario.setDni(medicoDTO.getDni());
-        usuario.setNombre(medicoDTO.getNombre());
-        usuario.setApellidos(medicoDTO.getApellidos());
-        usuario.setCorreo(medicoDTO.getCorreo());
-        usuario.setFechaNacimiento(medicoDTO.getFechaNacimiento());
-        if (medicoDTO.getClave() != null && !medicoDTO.getClave().trim().isEmpty()) {
-            usuario.setClave(medicoDTO.getClave());
-        }
     }
 }

@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "medico")
@@ -25,13 +23,7 @@ public class Medico {
     @JsonManagedReference("medico-usuario")
     private Usuario usuario;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "medico_especialidad",
-        joinColumns = @JoinColumn(name = "id_medico"),
-        inverseJoinColumns = @JoinColumn(name = "id_especialidad")
-    )
-    @JsonManagedReference("medico-especialidades")
-    private Set<Especialidad> especialidades = new HashSet<>();
+    @Column(name = "especialidad")
+    private String especialidad;
 
 }

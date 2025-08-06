@@ -13,12 +13,11 @@ public enum ErrorCodeEnum {
     MEDICO_ESPECIALIDADES_DUPLICADAS("MED_001", "No se pueden agregar especialidades duplicadas para el mismo médico."),
     MEDICO_NO_ENCONTRADO("MED_002", "El médico especificado no fue encontrado."),
     MEDICO_ESTADO_INVALIDO("MED_003", "El estado del médico debe ser 0 (inactivo) o 1 (activo)."),
+    MEDICO_ESPECIALIDAD_INVALIDA("MED_004", "La especialidad del médico debe contener solo letras y espacios, tener entre 2 y 100 caracteres, y cada palabra debe tener al menos 2 letras."),
 
     RUTA_NO_ENCONTRADA("SYS_001", "Endpoint no existente o no disponible."),
 
-    ESPECIALIDAD_NO_ENCONTRADA("ESP_001", "La especialidad especificada no fue encontrada."),
-    ESPECIALIDAD_NOMBRE_EN_USO("ESP_002", "El nombre de la especialidad ya se encuentra en uso."),
-    ESPECIALIDAD_DESCRIPCION_EN_USO("ESP_003", "La descripción de la especialidad ya se encuentra en uso."),
+
     ROL_NO_ENCONTRADO("ROL_001", "El rol especificado no fue encontrado en el sistema.");
 
     private final String code;
