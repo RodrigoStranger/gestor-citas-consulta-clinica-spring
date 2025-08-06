@@ -58,12 +58,12 @@ public class IMedicoServiceImpl implements IMedicoService {
 
     @Override
     public List<Medico> listarMedicosHabilitados() {
-        return medicoRepository.findByUsuarioActivo(1);
+        return medicoRepository.findMedicosHabilitados(TipoRol.MEDICO);
     }
 
     @Override
     public List<Medico> listarMedicosDeshabilitados() {
-        return medicoRepository.findByUsuarioActivo(0);
+        return medicoRepository.findMedicosDeshabilitados(TipoRol.MEDICO);
     }
 
     @Override
