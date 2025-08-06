@@ -89,66 +89,94 @@ public class IUsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public Usuario agregarRolAUsuario(Long idUsuario, TipoRol tipoRol) {
-        // Validar parámetros de entrada
-        if (idUsuario == null) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_ID_REQUERIDO);
-        }
-        if (tipoRol == null) {
-            throw new BusinessException(ErrorCodeEnum.ROL_TIPO_REQUERIDO);
-        }
-
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
-
-        Rol rol = rolRepository.findByNombre(tipoRol)
-            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.ROL_NO_ENCONTRADO));
-
-        // Verificar si el usuario ya tiene este rol (validación mejorada)
-        boolean yaTieneRol = usuario.getRoles().stream()
-            .anyMatch(r -> r.getNombre() != null && r.getNombre().equals(tipoRol));
-
-        if (yaTieneRol) {
+        ValidacionRolData data = validarParametrosYObtenerEntidades(idUsuario, tipoRol);
+        if (usuarioTieneRol(data.usuario, tipoRol)) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_YA_TIENE_ROL);
         }
-
-        // Validación adicional: verificar si el usuario está activo
-        if (usuario.getActivo() == 0) {
+        if (data.usuario.getActivo() == 0) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_INACTIVO_NO_PUEDE_TENER_ROLES);
         }
-
-        usuario.getRoles().add(rol);
-        return usuarioRepository.save(usuario);
+        data.usuario.getRoles().add(data.rol);
+        return usuarioRepository.save(data.usuario);
     }
 
     @Override
     public Usuario quitarRolAUsuario(Long idUsuario, TipoRol tipoRol) {
-        // Validar parámetros de entrada
+        ValidacionRolData data = validarParametrosYObtenerEntidades(idUsuario, tipoRol);
+        if (!usuarioTieneRol(data.usuario, tipoRol)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NO_TIENE_ROL);
+        }
+        if (data.usuario.getRoles().size() <= 1) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_DEBE_TENER_AL_MENOS_UN_ROL);
+        }
+        removerRolDelUsuario(data.usuario, tipoRol);
+
+        return usuarioRepository.save(data.usuario);
+    }
+
+    @Override
+    public Usuario actualizarUsuario(Long idUsuario, UsuarioDTO usuarioDTO) {
+        validarUsuarioParaActualizacion(idUsuario, usuarioDTO);
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
+
+        usuario.setNombre(usuarioDTO.getNombre());
+        usuario.setApellidos(usuarioDTO.getApellidos());
+        usuario.setCorreo(usuarioDTO.getCorreo());
+        usuario.setFechaNacimiento(usuarioDTO.getFechaNacimiento());
+        return usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public void validarUsuarioParaActualizacion(Long idUsuario, UsuarioDTO usuarioDTO) {
+        Usuario usuarioExistentePorCorreo = usuarioRepository.findByCorreo(usuarioDTO.getCorreo());
+        if (usuarioExistentePorCorreo != null && !usuarioExistentePorCorreo.getId_usuario().equals(idUsuario)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
+        }
+        String nombreCompleto = TextNormalizationUtils.normalizeText(
+            usuarioDTO.getNombre() + " " + usuarioDTO.getApellidos()
+        );
+        boolean nombreCompletoExiste = usuarioRepository.findAll().stream()
+                .anyMatch(usuario -> {
+                    if (usuario.getId_usuario().equals(idUsuario)) {
+                        return false;
+                    }
+                    String nombreCompletoExistente = TextNormalizationUtils.normalizeText(
+                        usuario.getNombre() + " " + usuario.getApellidos()
+                    );
+                    return nombreCompletoExistente.equals(nombreCompleto);
+                });
+        if (nombreCompletoExiste) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NOMBRE_EN_USO);
+        }
+        if (usuarioDTO.getFechaNacimiento() != null &&
+                !usuarioDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_FECHA_NACIMIENTO_INVALIDA);
+        }
+    }
+
+    private record ValidacionRolData(Usuario usuario, Rol rol) {}
+    private ValidacionRolData validarParametrosYObtenerEntidades(Long idUsuario, TipoRol tipoRol) {
         if (idUsuario == null) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_ID_REQUERIDO);
         }
         if (tipoRol == null) {
             throw new BusinessException(ErrorCodeEnum.ROL_TIPO_REQUERIDO);
         }
-
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
+        Rol rol = rolRepository.findByNombre(tipoRol)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.ROL_NO_ENCONTRADO));
+        return new ValidacionRolData(usuario, rol);
+    }
 
-        // Verificar si el usuario tiene el rol que se quiere quitar
-        boolean tieneRol = usuario.getRoles().stream()
-            .anyMatch(r -> r.getNombre() != null && r.getNombre().equals(tipoRol));
+    private boolean usuarioTieneRol(Usuario usuario, TipoRol tipoRol) {
+        return usuario.getRoles().stream()
+                .anyMatch(r -> r.getNombre() != null && r.getNombre().equals(tipoRol));
+    }
 
-        if (!tieneRol) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_NO_TIENE_ROL);
-        }
-
-        // Validar que el usuario tenga al menos un rol después de quitar este
-        if (usuario.getRoles().size() <= 1) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_DEBE_TENER_AL_MENOS_UN_ROL);
-        }
-
-        // Remover el rol del usuario
+    private void removerRolDelUsuario(Usuario usuario, TipoRol tipoRol) {
         usuario.getRoles().removeIf(r -> r.getNombre() != null && r.getNombre().equals(tipoRol));
-
-        return usuarioRepository.save(usuario);
     }
 }

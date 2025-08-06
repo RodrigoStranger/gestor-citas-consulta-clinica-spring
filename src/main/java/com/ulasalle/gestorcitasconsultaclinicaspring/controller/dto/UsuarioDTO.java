@@ -1,5 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto;
 
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidClave;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidDni;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidTexts;
 import jakarta.validation.constraints.Email;
@@ -18,6 +19,7 @@ public class UsuarioDTO {
     private String dni;
 
     @NotBlank(message = "La clave de acceso es obligatoria")
+    @ValidClave
     private String clave;
 
     @NotBlank(message = "El nombre es obligatorio")

@@ -1,6 +1,5 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarClaveDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.RolDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Usuario;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.IUsuarioService;
@@ -24,8 +23,8 @@ public class UsuarioController {
     }
 
     @PutMapping("/{idUsuario}/clave")
-    public ResponseEntity<?> actualizarClaveUsuario(@PathVariable Long idUsuario, @Valid @RequestBody ActualizarClaveDTO actualizarClaveDTO) {
-        usuarioService.actualizarClaveUsuario(idUsuario, actualizarClaveDTO.getNuevaClave());
+    public ResponseEntity<?> actualizarClaveUsuario(@PathVariable Long idUsuario, @RequestBody String nuevaClave) {
+        usuarioService.actualizarClaveUsuario(idUsuario, nuevaClave);
         ResponseWrapper<Void> response = ResponseWrapper.success(null, "Clave de usuario actualizada exitosamente");
         return response.toResponseEntity();
     }

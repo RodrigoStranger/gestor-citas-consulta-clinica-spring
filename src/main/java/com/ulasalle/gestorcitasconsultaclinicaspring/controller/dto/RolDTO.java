@@ -8,8 +8,6 @@ import lombok.Data;
 @Data
 public class RolDTO {
 
-    private Long id;
-
     @NotNull(message = "El tipo de rol es obligatorio")
     private TipoRol nombre;
 

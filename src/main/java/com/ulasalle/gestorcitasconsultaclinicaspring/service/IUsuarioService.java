@@ -9,4 +9,6 @@ public interface IUsuarioService {
     Usuario crearUsuario(UsuarioDTO usuarioDTO);
     Usuario agregarRolAUsuario(Long idUsuario, TipoRol tipoRol);
     Usuario quitarRolAUsuario(Long idUsuario, TipoRol tipoRol);
+    Usuario actualizarUsuario(Long idUsuario, UsuarioDTO usuarioDTO);
+    void validarUsuarioParaActualizacion(Long idUsuario, UsuarioDTO usuarioDTO);
 }

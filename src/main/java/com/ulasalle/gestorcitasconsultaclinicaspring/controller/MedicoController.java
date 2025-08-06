@@ -67,11 +67,4 @@ public class MedicoController {
         ResponseWrapper<Set<String>> response = ResponseWrapper.success(especialidades, "Especialidades obtenidas exitosamente");
         return response.toResponseEntity();
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarMedico(@PathVariable Long id, @Valid @RequestBody MedicoDTO medicoDTO) {
-        Medico medicoActualizado = medicoService.actualizarMedico(id, medicoDTO);
-        ResponseWrapper<Medico> response = ResponseWrapper.success(medicoActualizado, "Médico actualizado exitosamente");
-        return response.toResponseEntity();
-    }
 }
