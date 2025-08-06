@@ -1,5 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.service;
 
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
 
@@ -12,6 +13,6 @@ public interface IMedicoService {
     List<Medico> listarMedicosDeshabilitados();
     Medico obtenerMedicoPorId(Long id);
     Medico cambiarEstadoMedico(Long id, int nuevoEstado);
-    Medico actualizarMedico(Long idMedico, MedicoDTO medicoDTO);
+    Medico actualizarMedico(Long idMedico, ActualizarMedicoDTO actualizarMedicoDTO);
     Set<String> obtenerTodasLasEspecialidades();
 }

@@ -45,32 +45,36 @@ public class IUsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public Usuario crearUsuario(UsuarioDTO usuarioDTO) {
-        validarUsuarioDTO(usuarioDTO);
-        Usuario usuario = crearUsuarioDesdeDTO(usuarioDTO);
+        String correoNormalizado = TextNormalizationUtils.normalizeText(usuarioDTO.getCorreo());
+        String nombreNormalizado = TextNormalizationUtils.normalizeText(usuarioDTO.getNombre());
+        String apellidosNormalizados = TextNormalizationUtils.normalizeText(usuarioDTO.getApellidos());
+
+        validarUsuarioDTO(usuarioDTO, correoNormalizado, nombreNormalizado, apellidosNormalizados);
+        Usuario usuario = crearUsuarioDesdeDTO(usuarioDTO, correoNormalizado, nombreNormalizado, apellidosNormalizados);
         return usuarioRepository.save(usuario);
     }
 
-    private void validarUsuarioDTO(UsuarioDTO usuarioDTO) {
+    private void validarUsuarioDTO(UsuarioDTO usuarioDTO, String correoNormalizado, String nombreNormalizado, String apellidosNormalizados) {
         if (usuarioRepository.existsByDni(usuarioDTO.getDni())) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_DNI_EN_USO);
         }
-        if (usuarioRepository.existsByCorreo(usuarioDTO.getCorreo())) {
+        if (usuarioRepository.existsByCorreo(correoNormalizado)) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
         }
-        validarNombreCompletoUnico(usuarioDTO.getNombre(), usuarioDTO.getApellidos(), null);
+        validarNombreCompletoUnico(nombreNormalizado, apellidosNormalizados, null);
         if (usuarioDTO.getFechaNacimiento() != null &&
                 !usuarioDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_FECHA_NACIMIENTO_INVALIDA);
         }
     }
 
-    private Usuario crearUsuarioDesdeDTO(UsuarioDTO usuarioDTO) {
+    private Usuario crearUsuarioDesdeDTO(UsuarioDTO usuarioDTO, String correoNormalizado, String nombreNormalizado, String apellidosNormalizados) {
         Usuario usuario = new Usuario();
         usuario.setDni(usuarioDTO.getDni());
         usuario.setClave(usuarioDTO.getClave());
-        usuario.setNombre(usuarioDTO.getNombre());
-        usuario.setApellidos(usuarioDTO.getApellidos());
-        usuario.setCorreo(usuarioDTO.getCorreo());
+        usuario.setNombre(nombreNormalizado);
+        usuario.setApellidos(apellidosNormalizados);
+        usuario.setCorreo(correoNormalizado);
         usuario.setFechaNacimiento(usuarioDTO.getFechaNacimiento());
         return usuario;
     }
@@ -119,16 +123,17 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
 
-        usuario.setNombre(usuarioDTO.getNombre());
-        usuario.setApellidos(usuarioDTO.getApellidos());
-        usuario.setCorreo(usuarioDTO.getCorreo());
+        usuario.setNombre(TextNormalizationUtils.normalizeText(usuarioDTO.getNombre()));
+        usuario.setApellidos(TextNormalizationUtils.normalizeText(usuarioDTO.getApellidos()));
+        usuario.setCorreo(TextNormalizationUtils.normalizeText(usuarioDTO.getCorreo()));
         usuario.setFechaNacimiento(usuarioDTO.getFechaNacimiento());
         return usuarioRepository.save(usuario);
     }
 
     @Override
     public void validarUsuarioParaActualizacion(Long idUsuario, UsuarioDTO usuarioDTO) {
-        Usuario usuarioExistentePorCorreo = usuarioRepository.findByCorreo(usuarioDTO.getCorreo());
+        String correoNormalizado = TextNormalizationUtils.normalizeText(usuarioDTO.getCorreo());
+        Usuario usuarioExistentePorCorreo = usuarioRepository.findByCorreo(correoNormalizado);
         if (usuarioExistentePorCorreo != null && !usuarioExistentePorCorreo.getId_usuario().equals(idUsuario)) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
         }

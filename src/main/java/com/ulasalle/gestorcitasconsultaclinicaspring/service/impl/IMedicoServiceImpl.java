@@ -1,5 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.TextsValidator;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.*;
@@ -86,28 +87,55 @@ public class IMedicoServiceImpl implements IMedicoService {
     }
 
     @Override
-    public Medico actualizarMedico(Long idMedico, MedicoDTO medicoDTO) {
+    public Medico actualizarMedico(Long idMedico, ActualizarMedicoDTO actualizarMedicoDTO) {
         // Validar que el médico existe
         Medico medico = medicoRepository.findById(idMedico)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
 
-        // Validar la especialidad
-        validarEspecialidad(medicoDTO.getEspecialidad());
+        // Normalizar los textos antes de validar y guardar
+        String correoNormalizado = TextNormalizationUtils.normalizeText(actualizarMedicoDTO.getCorreo());
+        String especialidadNormalizada = TextNormalizationUtils.normalizeText(actualizarMedicoDTO.getEspecialidad());
+        String nombreNormalizado = TextNormalizationUtils.normalizeText(actualizarMedicoDTO.getNombre());
+        String apellidosNormalizados = TextNormalizationUtils.normalizeText(actualizarMedicoDTO.getApellidos());
 
-        // Actualizar los datos del usuario asociado (correo, nombre, apellidos)
+        // Validar la especialidad normalizada
+        validarEspecialidad(especialidadNormalizada);
+
+        // Validar los datos del usuario para actualización
         Usuario usuario = medico.getUsuario();
-        usuarioService.validarUsuarioParaActualizacion(usuario.getId_usuario(), medicoDTO);
+        validarDatosUsuarioParaActualizacion(usuario.getId_usuario(), correoNormalizado, nombreNormalizado, apellidosNormalizados);
 
-        usuario.setCorreo(medicoDTO.getCorreo());
-        usuario.setNombre(medicoDTO.getNombre());
-        usuario.setApellidos(medicoDTO.getApellidos());
+        // Actualizar los datos del usuario con textos normalizados
+        usuario.setCorreo(correoNormalizado);
+        usuario.setNombre(nombreNormalizado);
+        usuario.setApellidos(apellidosNormalizados);
 
-        // Actualizar la especialidad del médico
-        medico.setEspecialidad(medicoDTO.getEspecialidad());
+        // Actualizar la especialidad del médico con texto normalizado
+        medico.setEspecialidad(especialidadNormalizada);
 
         // Guardar cambios
         usuarioRepository.save(usuario);
         return medicoRepository.save(medico);
+    }
+
+    private void validarDatosUsuarioParaActualizacion(Long idUsuario, String correoNormalizado, String nombreNormalizado, String apellidosNormalizados) {
+        // Validar que el correo normalizado no esté en uso por otro usuario
+        Usuario usuarioExistentePorCorreo = usuarioRepository.findByCorreo(correoNormalizado);
+        if (usuarioExistentePorCorreo != null && !usuarioExistentePorCorreo.getId_usuario().equals(idUsuario)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
+        }
+
+        // Validar que el nombre completo normalizado no esté en uso por otro usuario
+        String nombreCompletoNormalizado = nombreNormalizado + " " + apellidosNormalizados;
+        boolean nombreCompletoExiste = usuarioRepository.findAll().stream()
+                .filter(usuario -> !idUsuario.equals(usuario.getId_usuario()))
+                .anyMatch(usuario -> {
+                    String nombreCompletoExistente = usuario.getNombre() + " " + usuario.getApellidos();
+                    return TextNormalizationUtils.normalizedEquals(nombreCompletoNormalizado, nombreCompletoExistente);
+                });
+        if (nombreCompletoExiste) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NOMBRE_EN_USO);
+        }
     }
 
     @Override

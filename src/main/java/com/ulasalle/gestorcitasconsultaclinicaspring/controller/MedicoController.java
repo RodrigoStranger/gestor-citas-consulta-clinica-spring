@@ -1,5 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller;
 
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.IMedicoService;
@@ -62,7 +63,7 @@ public class MedicoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarMedico(@PathVariable Long id, @Valid @RequestBody MedicoDTO medicoDTO) {
+    public ResponseEntity<?> actualizarMedico(@PathVariable Long id, @Valid @RequestBody ActualizarMedicoDTO medicoDTO) {
         Medico medicoActualizado = medicoService.actualizarMedico(id, medicoDTO);
         ResponseWrapper<Medico> response = ResponseWrapper.success(medicoActualizado, "Médico actualizado exitosamente");
         return response.toResponseEntity();
