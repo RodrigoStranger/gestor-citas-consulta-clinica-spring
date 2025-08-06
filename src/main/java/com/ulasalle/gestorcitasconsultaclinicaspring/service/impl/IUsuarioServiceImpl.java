@@ -1,6 +1,7 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.UsuarioDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.model.EstadoUsuario;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Rol;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.TipoRol;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Usuario;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -45,13 +48,28 @@ public class IUsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public Usuario crearUsuario(UsuarioDTO usuarioDTO) {
+        NormalizedUsuarioFields fields = normalizeUsuarioFields(usuarioDTO);
+        validarUsuarioDTO(usuarioDTO, fields.correo, fields.nombre, fields.apellidos);
+        Usuario usuario = crearUsuarioDesdeDTO(usuarioDTO, fields.correo, fields.nombre, fields.apellidos);
+        return usuarioRepository.save(usuario);
+    }
+
+    private NormalizedUsuarioFields normalizeUsuarioFields(UsuarioDTO usuarioDTO) {
         String correoNormalizado = TextNormalizationUtils.normalizeText(usuarioDTO.getCorreo());
         String nombreNormalizado = TextNormalizationUtils.normalizeText(usuarioDTO.getNombre());
         String apellidosNormalizados = TextNormalizationUtils.normalizeText(usuarioDTO.getApellidos());
+        return new NormalizedUsuarioFields(correoNormalizado, nombreNormalizado, apellidosNormalizados);
+    }
 
-        validarUsuarioDTO(usuarioDTO, correoNormalizado, nombreNormalizado, apellidosNormalizados);
-        Usuario usuario = crearUsuarioDesdeDTO(usuarioDTO, correoNormalizado, nombreNormalizado, apellidosNormalizados);
-        return usuarioRepository.save(usuario);
+    private static class NormalizedUsuarioFields {
+        String correo;
+        String nombre;
+        String apellidos;
+        NormalizedUsuarioFields(String correo, String nombre, String apellidos) {
+            this.correo = correo;
+            this.nombre = nombre;
+            this.apellidos = apellidos;
+        }
     }
 
     private void validarUsuarioDTO(UsuarioDTO usuarioDTO, String correoNormalizado, String nombreNormalizado, String apellidosNormalizados) {
@@ -89,7 +107,6 @@ public class IUsuarioServiceImpl implements IUsuarioService {
             throw new BusinessException(ErrorCodeEnum.USUARIO_INACTIVO_NO_PUEDE_TENER_ROLES);
         }
 
-        // Si es el primer rol, establecerlo como rol por defecto
         if (data.usuario.getRoles().isEmpty()) {
             data.usuario.setRolPorDefecto(tipoRol);
         }
@@ -174,7 +191,46 @@ public class IUsuarioServiceImpl implements IUsuarioService {
 
     private boolean usuarioTieneRol(Usuario usuario, TipoRol tipoRol) {
         return usuario.getRoles().stream()
-                .anyMatch(r -> r.getNombre() != null && r.getNombre().equals(tipoRol));
+                .anyMatch(rol -> rol.getNombre() != null && rol.getNombre().equals(tipoRol));
+    }
+
+    @Override
+    public List<Usuario> listarUsuariosPorRolYEstado(TipoRol tipoRol, int activo) {
+        return usuarioRepository.findByActivo(activo).stream()
+                .filter(usuario -> usuarioTieneRol(usuario, tipoRol))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Usuario obtenerAdministradorPorId(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
+
+        if (!usuarioTieneRol(usuario, TipoRol.ADMIN)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NO_ES_ADMINISTRADOR);
+        }
+
+        return usuario;
+    }
+
+    @Override
+    public Usuario cambiarEstadoAdministrador(Long idUsuario, int nuevoEstado) {
+        if (!EstadoUsuario.esValido(nuevoEstado)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_ESTADO_INVALIDO);
+        }
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
+
+        boolean esAdministrador = usuario.getRoles().stream()
+                .anyMatch(rol -> rol.getNombre() != null && rol.getNombre().equals(TipoRol.ADMIN));
+
+        if (!esAdministrador) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NO_ES_ADMINISTRADOR);
+        }
+
+        usuario.setActivo(nuevoEstado);
+        return usuarioRepository.save(usuario);
     }
 
     private void removerRolDelUsuario(Usuario usuario, TipoRol tipoRol) {
