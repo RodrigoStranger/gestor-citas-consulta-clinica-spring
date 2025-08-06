@@ -84,6 +84,12 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         if (data.usuario.getActivo() == 0) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_INACTIVO_NO_PUEDE_TENER_ROLES);
         }
+
+        // Si es el primer rol, establecerlo como rol por defecto
+        if (data.usuario.getRoles().isEmpty()) {
+            data.usuario.setRolPorDefecto(tipoRol);
+        }
+
         data.usuario.getRoles().add(data.rol);
         return usuarioRepository.save(data.usuario);
     }
@@ -97,8 +103,12 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         if (data.usuario.getRoles().size() <= 1) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_DEBE_TENER_AL_MENOS_UN_ROL);
         }
-        removerRolDelUsuario(data.usuario, tipoRol);
 
+        if (data.usuario.getRolPorDefecto() != null && data.usuario.getRolPorDefecto().equals(tipoRol)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NO_PUEDE_QUITAR_ROL_POR_DEFECTO);
+        }
+
+        removerRolDelUsuario(data.usuario, tipoRol);
         return usuarioRepository.save(data.usuario);
     }
 

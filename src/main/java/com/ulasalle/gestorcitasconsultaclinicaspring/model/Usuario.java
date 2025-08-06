@@ -45,6 +45,11 @@ public class Usuario {
 
     @Column(name = "fecha_registro")
     private LocalDate fechaRegistro;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol_por_defecto")
+    private TipoRol rolPorDefecto;
+
     @PrePersist
     protected void onCreate() {
         fechaRegistro = LocalDate.now();
