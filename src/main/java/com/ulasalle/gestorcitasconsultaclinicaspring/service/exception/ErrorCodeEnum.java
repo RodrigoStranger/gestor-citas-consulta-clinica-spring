@@ -9,6 +9,14 @@ public enum ErrorCodeEnum {
     USUARIO_DNI_EN_USO("USR_002", "El DNI del usuario ya se encuentra en uso."),
     USUARIO_CORREO_EN_USO("USR_003", "El correo del usuario ya se encuentra en uso."),
     USUARIO_FECHA_NACIMIENTO_INVALIDA("USR_004", "La fecha de nacimiento del usuario no es válida."),
+    USUARIO_NO_ENCONTRADO("USR_005", "El usuario especificado no fue encontrado."),
+    USUARIO_CLAVE_VACIA("USR_006", "La clave del usuario no puede estar vacía."),
+    USUARIO_CLAVE_MUY_CORTA("USR_007", "La clave del usuario debe tener al menos 6 caracteres."),
+    USUARIO_YA_TIENE_ROL("USR_008", "El usuario ya tiene el rol especificado asignado."),
+    USUARIO_ID_REQUERIDO("USR_009", "El ID del usuario es obligatorio."),
+    USUARIO_INACTIVO_NO_PUEDE_TENER_ROLES("USR_010", "No se pueden asignar roles a un usuario inactivo."),
+    USUARIO_NO_TIENE_ROL("USR_011", "El usuario no tiene el rol especificado asignado."),
+    USUARIO_DEBE_TENER_AL_MENOS_UN_ROL("USR_012", "El usuario debe tener al menos un rol asignado."),
 
     MEDICO_ESPECIALIDADES_DUPLICADAS("MED_001", "No se pueden agregar especialidades duplicadas para el mismo médico."),
     MEDICO_NO_ENCONTRADO("MED_002", "El médico especificado no fue encontrado."),
@@ -17,8 +25,8 @@ public enum ErrorCodeEnum {
 
     RUTA_NO_ENCONTRADA("SYS_001", "Endpoint no existente o no disponible."),
 
-
-    ROL_NO_ENCONTRADO("ROL_001", "El rol especificado no fue encontrado en el sistema.");
+    ROL_NO_ENCONTRADO("ROL_001", "El rol especificado no fue encontrado en el sistema."),
+    ROL_TIPO_REQUERIDO("ROL_002", "El tipo de rol es obligatorio.");
 
     private final String code;
     private final String message;
