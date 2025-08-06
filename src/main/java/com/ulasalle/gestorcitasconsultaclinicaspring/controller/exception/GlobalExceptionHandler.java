@@ -58,9 +58,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<?> handleNoHandlerFoundException(
-            NoHandlerFoundException exception
-    ) {
+    public ResponseEntity<?> handleNoHandlerFoundException() {
         ErrorCodeEnum errorCode = ErrorCodeEnum.RUTA_NO_ENCONTRADA;
         ResponseWrapper<Void> response = ResponseWrapper.error(
             errorCode.getMessage(),

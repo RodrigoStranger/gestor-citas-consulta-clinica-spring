@@ -7,11 +7,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class MedicoDTO extends UsuarioDTO {
-    private Long id;
+    private Long id_medico;
 
     @NotBlank(message = "La especialidad es obligatoria")
     @ValidTexts
     private String especialidad;
-
-    private String numeroColegiado;
 }
