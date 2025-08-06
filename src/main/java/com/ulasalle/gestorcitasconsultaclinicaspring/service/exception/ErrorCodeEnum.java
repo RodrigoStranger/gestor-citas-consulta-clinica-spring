@@ -18,7 +18,6 @@ public enum ErrorCodeEnum {
     USUARIO_NO_TIENE_ROL("USR_011", "El usuario no tiene el rol especificado asignado."),
     USUARIO_DEBE_TENER_AL_MENOS_UN_ROL("USR_012", "El usuario debe tener al menos un rol asignado."),
 
-    MEDICO_ESPECIALIDADES_DUPLICADAS("MED_001", "No se pueden agregar especialidades duplicadas para el mismo médico."),
     MEDICO_NO_ENCONTRADO("MED_002", "El médico especificado no fue encontrado."),
     MEDICO_ESTADO_INVALIDO("MED_003", "El estado del médico debe ser 0 (inactivo) o 1 (activo)."),
     MEDICO_ESPECIALIDAD_INVALIDA("MED_004", "La especialidad del médico debe contener solo letras y espacios, tener entre 2 y 100 caracteres, y cada palabra debe tener al menos 2 letras."),
