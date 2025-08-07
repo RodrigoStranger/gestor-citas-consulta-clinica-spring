@@ -134,7 +134,7 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         return usuarioRepository.save(data.usuario);
     }
 
-    private Usuario actualizarUsuarioComun(Long idUsuario, String correo, String nombre, String apellidos, LocalDate fechaNacimiento) {
+    private Usuario actualizarUsuarioComun(Long idUsuario, String correo, String nombre, String apellidos) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
         String correoNormalizado = TextNormalizationUtils.normalizeText(correo);
@@ -148,9 +148,6 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         usuario.setCorreo(correoNormalizado);
         usuario.setNombre(nombreNormalizado);
         usuario.setApellidos(apellidosNormalizados);
-        if (fechaNacimiento != null) {
-            usuario.setFechaNacimiento(fechaNacimiento);
-        }
         return usuarioRepository.save(usuario);
     }
 
@@ -159,31 +156,7 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         return actualizarUsuarioComun(idUsuario,
             actualizarUsuarioDTO.getCorreo(),
             actualizarUsuarioDTO.getNombre(),
-            actualizarUsuarioDTO.getApellidos(),
-            null);
-    }
-
-    @Override
-    public Usuario actualizarUsuario(Long idUsuario, UsuarioDTO usuarioDTO) {
-        return actualizarUsuarioComun(idUsuario,
-            usuarioDTO.getCorreo(),
-            usuarioDTO.getNombre(),
-            usuarioDTO.getApellidos(),
-            usuarioDTO.getFechaNacimiento());
-    }
-
-    @Override
-    public void validarUsuarioParaActualizacion(Long idUsuario, UsuarioDTO usuarioDTO) {
-        String correoNormalizado = TextNormalizationUtils.normalizeText(usuarioDTO.getCorreo());
-        Usuario usuarioExistentePorCorreo = usuarioRepository.findByCorreo(correoNormalizado);
-        if (usuarioExistentePorCorreo != null && !usuarioExistentePorCorreo.getId_usuario().equals(idUsuario)) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
-        }
-        validarNombreCompletoUnico(usuarioDTO.getNombre(), usuarioDTO.getApellidos(), idUsuario);
-        if (usuarioDTO.getFechaNacimiento() != null &&
-                !usuarioDTO.getFechaNacimiento().isBefore(LocalDate.now())) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_FECHA_NACIMIENTO_INVALIDA);
-        }
+            actualizarUsuarioDTO.getApellidos());
     }
 
     private void validarNombreCompletoUnico(String nombre, String apellidos, Long idUsuarioExcluir) {
@@ -240,7 +213,7 @@ public class IUsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public Usuario cambiarEstadoAdministrador(Long idUsuario, int nuevoEstado) {
-        if (!EstadoUsuario.esValido(nuevoEstado)) {
+        if (EstadoUsuario.fromValor(nuevoEstado) == null) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_ESTADO_INVALIDO);
         }
 

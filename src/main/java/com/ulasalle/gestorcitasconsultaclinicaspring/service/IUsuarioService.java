@@ -13,9 +13,7 @@ public interface IUsuarioService {
     Usuario crearUsuario(UsuarioDTO usuarioDTO);
     Usuario agregarRolAUsuario(Long idUsuario, TipoRol tipoRol);
     Usuario quitarRolAUsuario(Long idUsuario, TipoRol tipoRol);
-    Usuario actualizarUsuario(Long idUsuario, UsuarioDTO usuarioDTO);
     Usuario actualizarUsuario(Long idUsuario, ActualizarUsuarioDTO actualizarUsuarioDTO);
-    void validarUsuarioParaActualizacion(Long idUsuario, UsuarioDTO usuarioDTO);
     List<Usuario> listarUsuariosPorRolYEstado(TipoRol tipoRol, int activo);
     Usuario obtenerAdministradorPorId(Long idUsuario);
     Usuario cambiarEstadoAdministrador(Long idUsuario, int nuevoEstado);

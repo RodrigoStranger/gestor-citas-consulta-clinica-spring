@@ -59,12 +59,12 @@ public class IMedicoServiceImpl implements IMedicoService {
 
     @Override
     public List<Medico> listarMedicosHabilitados() {
-        return medicoRepository.findMedicosHabilitados(TipoRol.MEDICO);
+        return medicoRepository.findByUsuario_ActivoAndUsuario_Roles_Nombre(1, TipoRol.MEDICO);
     }
 
     @Override
     public List<Medico> listarMedicosDeshabilitados() {
-        return medicoRepository.findMedicosDeshabilitados(TipoRol.MEDICO);
+        return medicoRepository.findByUsuario_ActivoAndUsuario_Roles_Nombre(0, TipoRol.MEDICO);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class IMedicoServiceImpl implements IMedicoService {
 
     @Override
     public Medico cambiarEstadoMedico(Long id, int nuevoEstado) {
-        if (!EstadoUsuario.esValido(nuevoEstado)) {
+        if (EstadoUsuario.fromValor(nuevoEstado) == null) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_ESTADO_INVALIDO);
         }
         Medico medico = medicoRepository.findById(id)

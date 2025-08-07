@@ -24,7 +24,4 @@ public enum EstadoUsuario {
         return null;
     }
 
-    public static boolean esValido(int valor) {
-        return fromValor(valor) != null;
-    }
 }
