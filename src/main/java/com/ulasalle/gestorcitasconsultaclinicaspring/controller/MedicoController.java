@@ -54,7 +54,7 @@ public class MedicoController {
         return response.toResponseEntity();
     }
 
-    @PutMapping("/{id}/estado/{estado}")
+    @PutMapping("/{id}/estado/{estado}") // recibe el id del medico
     public ResponseEntity<?> cambiarEstadoMedico(@PathVariable Long id, @PathVariable int estado) {
         Medico medico = medicoService.cambiarEstadoMedico(id, estado);
         String mensaje = estado == 0 ? "Médico deshabilitado exitosamente" : "Médico habilitado exitosamente";
@@ -63,8 +63,9 @@ public class MedicoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarMedico(@PathVariable Long id, @Valid @RequestBody ActualizarMedicoDTO medicoDTO) {
-        Medico medicoActualizado = medicoService.actualizarMedico(id, medicoDTO);
+    public ResponseEntity<?> actualizarMedico(@PathVariable Long id,
+                                              @Valid @RequestBody ActualizarMedicoDTO request) {
+        Medico medicoActualizado = medicoService.actualizarMedico(id, request);
         ResponseWrapper<Medico> response = ResponseWrapper.success(medicoActualizado, "Médico actualizado exitosamente");
         return response.toResponseEntity();
     }

@@ -1,7 +1,7 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
-import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.TextsValidator;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.*;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IMedicoJPARepository;
@@ -81,61 +81,28 @@ public class IMedicoServiceImpl implements IMedicoService {
         Medico medico = medicoRepository.findById(id)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
         Usuario usuario = medico.getUsuario();
+        boolean esMedico = usuario.getRoles().stream()
+            .anyMatch(rol -> rol.getNombre() != null && rol.getNombre().equals(TipoRol.MEDICO));
+        if (!esMedico) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NO_ES_MEDICO); // validacion extra xd
+        }
         usuario.setActivo(nuevoEstado);
         usuarioRepository.save(usuario);
         return medico;
     }
 
     @Override
-    public Medico actualizarMedico(Long idMedico, ActualizarMedicoDTO actualizarMedicoDTO) {
-        // Validar que el médico existe
+    public Medico actualizarMedico(Long idMedico, ActualizarMedicoDTO request) {
         Medico medico = medicoRepository.findById(idMedico)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
-
-        // Normalizar los textos antes de validar y guardar
-        String correoNormalizado = TextNormalizationUtils.normalizeText(actualizarMedicoDTO.getCorreo());
-        String especialidadNormalizada = TextNormalizationUtils.normalizeText(actualizarMedicoDTO.getEspecialidad());
-        String nombreNormalizado = TextNormalizationUtils.normalizeText(actualizarMedicoDTO.getNombre());
-        String apellidosNormalizados = TextNormalizationUtils.normalizeText(actualizarMedicoDTO.getApellidos());
-
-        // Validar la especialidad normalizada
-        validarEspecialidad(especialidadNormalizada);
-
-        // Validar los datos del usuario para actualización
         Usuario usuario = medico.getUsuario();
-        validarDatosUsuarioParaActualizacion(usuario.getId_usuario(), correoNormalizado, nombreNormalizado, apellidosNormalizados);
-
-        // Actualizar los datos del usuario con textos normalizados
-        usuario.setCorreo(correoNormalizado);
-        usuario.setNombre(nombreNormalizado);
-        usuario.setApellidos(apellidosNormalizados);
-
-        // Actualizar la especialidad del médico con texto normalizado
-        medico.setEspecialidad(especialidadNormalizada);
-
-        // Guardar cambios
+        usuario.setCorreo(request.getCorreo());
+        usuario.setNombre(request.getNombre());
+        usuario.setApellidos(request.getApellidos());
         usuarioRepository.save(usuario);
+        validarEspecialidad(request.getEspecialidad());
+        medico.setEspecialidad(request.getEspecialidad());
         return medicoRepository.save(medico);
-    }
-
-    private void validarDatosUsuarioParaActualizacion(Long idUsuario, String correoNormalizado, String nombreNormalizado, String apellidosNormalizados) {
-        // Validar que el correo normalizado no esté en uso por otro usuario
-        Usuario usuarioExistentePorCorreo = usuarioRepository.findByCorreo(correoNormalizado);
-        if (usuarioExistentePorCorreo != null && !usuarioExistentePorCorreo.getId_usuario().equals(idUsuario)) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
-        }
-
-        // Validar que el nombre completo normalizado no esté en uso por otro usuario
-        String nombreCompletoNormalizado = nombreNormalizado + " " + apellidosNormalizados;
-        boolean nombreCompletoExiste = usuarioRepository.findAll().stream()
-                .filter(usuario -> !idUsuario.equals(usuario.getId_usuario()))
-                .anyMatch(usuario -> {
-                    String nombreCompletoExistente = usuario.getNombre() + " " + usuario.getApellidos();
-                    return TextNormalizationUtils.normalizedEquals(nombreCompletoNormalizado, nombreCompletoExistente);
-                });
-        if (nombreCompletoExiste) {
-            throw new BusinessException(ErrorCodeEnum.USUARIO_NOMBRE_EN_USO);
-        }
     }
 
     @Override

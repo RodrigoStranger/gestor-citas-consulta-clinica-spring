@@ -1,8 +1,9 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarClaveDTO;
-import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.RolDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarUsuarioDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.UsuarioDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.model.Rol;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.TipoRol;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Usuario;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.IUsuarioService;
@@ -34,16 +35,18 @@ public class UsuarioController {
         return response.toResponseEntity();
     }
 
-    @PutMapping("/{idUsuario}/rol")
-    public ResponseEntity<?> agregarRolAUsuario(@PathVariable Long idUsuario, @Valid @RequestBody RolDTO rolDTO) {
-        Usuario usuario = usuarioService.agregarRolAUsuario(idUsuario, rolDTO.getNombre());
+    @PutMapping("/{idUsuario}/rol/{nombreRol}")
+    public ResponseEntity<?> agregarRolAUsuario(@PathVariable Long idUsuario, @PathVariable String nombreRol) {
+        TipoRol tipoRol = TipoRol.valueOf(nombreRol);
+        Usuario usuario = usuarioService.agregarRolAUsuario(idUsuario, tipoRol);
         ResponseWrapper<Usuario> response = ResponseWrapper.success(usuario, "Rol asignado al usuario exitosamente");
         return response.toResponseEntity();
     }
 
-    @DeleteMapping("/{idUsuario}/rol")
-    public ResponseEntity<?> quitarRolAUsuario(@PathVariable Long idUsuario, @Valid @RequestBody RolDTO rolDTO) {
-        Usuario usuario = usuarioService.quitarRolAUsuario(idUsuario, rolDTO.getNombre());
+    @DeleteMapping("/{idUsuario}/rol/{nombreRol}")
+    public ResponseEntity<?> quitarRolAUsuario(@PathVariable Long idUsuario, @PathVariable String nombreRol) {
+        TipoRol tipoRol = TipoRol.valueOf(nombreRol);
+        Usuario usuario = usuarioService.quitarRolAUsuario(idUsuario, tipoRol);
         ResponseWrapper<Usuario> response = ResponseWrapper.success(usuario, "Rol removido del usuario exitosamente");
         return response.toResponseEntity();
     }
@@ -90,6 +93,34 @@ public class UsuarioController {
         Usuario administrador = usuarioService.cambiarEstadoAdministrador(idUsuario, estado);
         String mensaje = estado == 0 ? "Administrador deshabilitado exitosamente" : "Administrador habilitado exitosamente";
         ResponseWrapper<Usuario> response = ResponseWrapper.success(administrador, mensaje);
+        return response.toResponseEntity();
+    }
+
+    @GetMapping("/{idUsuario}/roles")
+    public ResponseEntity<?> obtenerRolesDeUsuario(@PathVariable Long idUsuario) {
+        List<Rol> roles = usuarioService.obtenerRolesDeUsuario(idUsuario);
+        ResponseWrapper<List<Rol>> response = ResponseWrapper.success(roles, "Roles del usuario obtenidos exitosamente");
+        return response.toResponseEntity();
+    }
+
+    @GetMapping("/pacientes/{idUsuario}")
+    public ResponseEntity<?> obtenerPacientePorId(@PathVariable Long idUsuario) {
+        Usuario paciente = usuarioService.obtenerPacientePorId(idUsuario);
+        ResponseWrapper<Usuario> response = ResponseWrapper.success(paciente, "Paciente encontrado exitosamente");
+        return response.toResponseEntity();
+    }
+
+    @GetMapping("/pacientes")
+    public ResponseEntity<?> listarPacientes() {
+        List<Usuario> pacientes = usuarioService.listarPacientes();
+        ResponseWrapper<List<Usuario>> response = ResponseWrapper.success(pacientes, "Pacientes obtenidos exitosamente");
+        return response.toResponseEntity();
+    }
+
+    @PutMapping("/{idUsuario}")
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Long idUsuario, @Valid @RequestBody ActualizarUsuarioDTO actualizarUsuarioDTO) {
+        Usuario usuario = usuarioService.actualizarUsuario(idUsuario, actualizarUsuarioDTO);
+        ResponseWrapper<Usuario> response = ResponseWrapper.success(usuario, "Usuario actualizado exitosamente");
         return response.toResponseEntity();
     }
 }

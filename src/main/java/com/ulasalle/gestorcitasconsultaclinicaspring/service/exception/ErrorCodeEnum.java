@@ -20,6 +20,8 @@ public enum ErrorCodeEnum {
     USUARIO_NO_PUEDE_QUITAR_ROL_POR_DEFECTO("USR_013", "No se puede quitar el rol por defecto del usuario."),
     USUARIO_NO_ES_ADMINISTRADOR("USR_014", "El usuario especificado no tiene el rol de administrador."),
     USUARIO_ESTADO_INVALIDO("USR_015", "El estado del usuario debe ser 0 (inactivo) o 1 (activo)."),
+    USUARIO_NO_ES_PACIENTE("USR_016", "El usuario especificado no tiene el rol de paciente."),
+    USUARIO_NO_ES_MEDICO("USR_017", "El usuario especificado no tiene el rol de médico."),
 
     MEDICO_NO_ENCONTRADO("MED_002", "El médico especificado no fue encontrado."),
     MEDICO_ESTADO_INVALIDO("MED_003", "El estado del médico debe ser 0 (inactivo) o 1 (activo)."),

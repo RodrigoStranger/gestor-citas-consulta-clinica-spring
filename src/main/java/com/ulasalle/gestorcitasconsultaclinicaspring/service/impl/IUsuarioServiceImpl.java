@@ -1,5 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarUsuarioDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.UsuarioDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.EstadoUsuario;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Rol;
@@ -133,18 +134,42 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         return usuarioRepository.save(data.usuario);
     }
 
-    @Override
-    public Usuario actualizarUsuario(Long idUsuario, UsuarioDTO usuarioDTO) {
-        validarUsuarioParaActualizacion(idUsuario, usuarioDTO);
-
+    private Usuario actualizarUsuarioComun(Long idUsuario, String correo, String nombre, String apellidos, LocalDate fechaNacimiento) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
-
-        usuario.setNombre(TextNormalizationUtils.normalizeText(usuarioDTO.getNombre()));
-        usuario.setApellidos(TextNormalizationUtils.normalizeText(usuarioDTO.getApellidos()));
-        usuario.setCorreo(TextNormalizationUtils.normalizeText(usuarioDTO.getCorreo()));
-        usuario.setFechaNacimiento(usuarioDTO.getFechaNacimiento());
+        String correoNormalizado = TextNormalizationUtils.normalizeText(correo);
+        String nombreNormalizado = TextNormalizationUtils.normalizeText(nombre);
+        String apellidosNormalizados = TextNormalizationUtils.normalizeText(apellidos);
+        Usuario usuarioExistentePorCorreo = usuarioRepository.findByCorreo(correoNormalizado);
+        if (usuarioExistentePorCorreo != null && !usuarioExistentePorCorreo.getId_usuario().equals(idUsuario)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
+        }
+        validarNombreCompletoUnico(nombreNormalizado, apellidosNormalizados, idUsuario);
+        usuario.setCorreo(correoNormalizado);
+        usuario.setNombre(nombreNormalizado);
+        usuario.setApellidos(apellidosNormalizados);
+        if (fechaNacimiento != null) {
+            usuario.setFechaNacimiento(fechaNacimiento);
+        }
         return usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public Usuario actualizarUsuario(Long idUsuario, ActualizarUsuarioDTO actualizarUsuarioDTO) {
+        return actualizarUsuarioComun(idUsuario,
+            actualizarUsuarioDTO.getCorreo(),
+            actualizarUsuarioDTO.getNombre(),
+            actualizarUsuarioDTO.getApellidos(),
+            null);
+    }
+
+    @Override
+    public Usuario actualizarUsuario(Long idUsuario, UsuarioDTO usuarioDTO) {
+        return actualizarUsuarioComun(idUsuario,
+            usuarioDTO.getCorreo(),
+            usuarioDTO.getNombre(),
+            usuarioDTO.getApellidos(),
+            usuarioDTO.getFechaNacimiento());
     }
 
     @Override
@@ -235,5 +260,32 @@ public class IUsuarioServiceImpl implements IUsuarioService {
 
     private void removerRolDelUsuario(Usuario usuario, TipoRol tipoRol) {
         usuario.getRoles().removeIf(r -> r.getNombre() != null && r.getNombre().equals(tipoRol));
+    }
+
+    @Override
+    public List<Rol> obtenerRolesDeUsuario(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
+        return new java.util.ArrayList<>(usuario.getRoles());
+    }
+
+    @Override
+    public Usuario obtenerPacientePorId(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
+        boolean esPaciente = usuario.getRoles().stream()
+            .anyMatch(rol -> rol.getNombre() != null && rol.getNombre().equals(TipoRol.PACIENTE));
+        if (!esPaciente) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NO_ES_PACIENTE);
+        }
+        return usuario;
+    }
+
+    @Override
+    public List<Usuario> listarPacientes() {
+        return usuarioRepository.findAll().stream()
+            .filter(usuario -> usuario.getRoles().stream()
+                .anyMatch(rol -> rol.getNombre() != null && rol.getNombre().equals(TipoRol.PACIENTE)))
+            .collect(Collectors.toList());
     }
 }
