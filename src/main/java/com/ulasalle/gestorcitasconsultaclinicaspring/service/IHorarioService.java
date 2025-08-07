@@ -5,5 +5,5 @@ import com.ulasalle.gestorcitasconsultaclinicaspring.model.Horario;
 
 public interface IHorarioService {
     Horario crearHorario(HorarioDTO dto);
+    Horario actualizarHorario(Long id, HorarioDTO dto);
 }
-

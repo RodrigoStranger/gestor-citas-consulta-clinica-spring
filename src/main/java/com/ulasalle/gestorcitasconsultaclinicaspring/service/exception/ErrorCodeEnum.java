@@ -33,7 +33,8 @@ public enum ErrorCodeEnum {
     ROL_TIPO_REQUERIDO("ROL_002", "El tipo de rol es obligatorio."),
 
     HORARIO_DUPLICADO("HOR_001", "Ya existe un horario igual para ese día y rango de horas."),
-    HORARIO_INVALIDO("HOR_002", "El horario está fuera del rango permitido por la clínica.");
+    HORARIO_INVALIDO("HOR_002", "El horario está fuera del rango permitido por la clínica."),
+    HORARIO_NO_EXISTE("HOR_003", "El horario especificado no existe.");
 
     private final String code;
     private final String message;

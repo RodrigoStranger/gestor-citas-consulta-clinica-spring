@@ -22,4 +22,11 @@ public class HorarioController {
         var response = ResponseWrapper.success(horario, "Horario creado exitosamente");
         return response.toResponseEntity();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarHorario(@PathVariable Long id, @Valid @RequestBody HorarioDTO dto) {
+        Horario horarioActualizado = horarioService.actualizarHorario(id, dto);
+        var response = ResponseWrapper.success(horarioActualizado, "Horario actualizado exitosamente");
+        return response.toResponseEntity();
+    }
 }

@@ -46,5 +46,35 @@ public class IHorarioServiceImpl implements IHorarioService {
         horario.setHoraFin(horaFin);
         return horarioRepository.save(horario);
     }
-}
 
+    @Override
+    public Horario actualizarHorario(Long id, HorarioDTO dto) {
+        if (!horarioRepository.existsById(id)) {
+            throw new BusinessException(ErrorCodeEnum.HORARIO_NO_EXISTE);
+        }
+        var optionalHorario = horarioRepository.findById(id);
+        if (optionalHorario.isEmpty()) {
+            throw new BusinessException(ErrorCodeEnum.HORARIO_INVALIDO);
+        }
+        Horario horario = optionalHorario.get();
+        TipoDiaSemana tipoDiaSemana;
+        try {
+            tipoDiaSemana = TipoDiaSemana.valueOf(dto.getTipoDiaSemana());
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException(ErrorCodeEnum.HORARIO_INVALIDO);
+        }
+        java.time.LocalTime horaInicio = java.time.LocalTime.parse(dto.getHoraInicio());
+        java.time.LocalTime horaFin = java.time.LocalTime.parse(dto.getHoraFin());
+        if (!HorarioClinica.esHoraValida(horaInicio) || !HorarioClinica.esHoraValida(horaFin)) {
+            throw new BusinessException(ErrorCodeEnum.HORARIO_INVALIDO);
+        }
+        var duplicados = horarioRepository.findByTipoDiaSemanaAndHoraInicioAndHoraFin(tipoDiaSemana, horaInicio, horaFin);
+        if (!duplicados.isEmpty() && duplicados.stream().anyMatch(h -> !h.getId_horario().equals(id))) {
+            throw new BusinessException(ErrorCodeEnum.HORARIO_DUPLICADO);
+        }
+        horario.setTipoDiaSemana(tipoDiaSemana);
+        horario.setHoraInicio(horaInicio);
+        horario.setHoraFin(horaFin);
+        return horarioRepository.save(horario);
+    }
+}
