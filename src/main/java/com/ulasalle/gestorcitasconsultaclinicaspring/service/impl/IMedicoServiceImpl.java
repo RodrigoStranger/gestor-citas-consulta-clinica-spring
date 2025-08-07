@@ -1,7 +1,7 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarEspecialidadDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
-import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.TextsValidator;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.*;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IMedicoJPARepository;
@@ -92,14 +92,9 @@ public class IMedicoServiceImpl implements IMedicoService {
     }
 
     @Override
-    public Medico actualizarMedico(Long idMedico, ActualizarMedicoDTO request) {
+    public Medico actualizarEspecialidad(Long idMedico, ActualizarEspecialidadDTO request) {
         Medico medico = medicoRepository.findById(idMedico)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
-        Usuario usuario = medico.getUsuario();
-        usuario.setCorreo(request.getCorreo());
-        usuario.setNombre(request.getNombre());
-        usuario.setApellidos(request.getApellidos());
-        usuarioRepository.save(usuario);
         validarEspecialidad(request.getEspecialidad());
         medico.setEspecialidad(request.getEspecialidad());
         return medicoRepository.save(medico);
