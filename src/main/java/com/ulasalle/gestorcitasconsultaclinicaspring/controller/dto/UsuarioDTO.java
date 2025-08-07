@@ -2,6 +2,7 @@ package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidClave;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidDni;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidTelefono;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidTexts;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -33,6 +34,10 @@ public class UsuarioDTO {
     @Email(message = "El formato del correo no es válido")
     @NotBlank(message = "El correo es obligatorio")
     private String correo;
+
+    @NotBlank(message = "El teléfono es obligatorio")
+    @ValidTelefono
+    private String telefono;
 
     @NotNull(message = "La fecha de nacimiento es obligatoria")
     @Past(message = "La fecha de nacimiento debe ser anterior a la fecha actual")

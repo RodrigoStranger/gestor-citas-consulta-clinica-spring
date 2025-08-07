@@ -95,6 +95,7 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         usuario.setApellidos(apellidosNormalizados);
         usuario.setCorreo(correoNormalizado);
         usuario.setFechaNacimiento(usuarioDTO.getFechaNacimiento());
+        usuario.setTelefono(usuarioDTO.getTelefono());
         return usuario;
     }
 
@@ -134,18 +135,20 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         return usuarioRepository.save(data.usuario);
     }
 
-    private Usuario actualizarUsuarioComun(Long idUsuario, String correo, String nombre, String apellidos) {
+    private Usuario actualizarUsuarioComun(Long idUsuario, String correo, String nombre, String apellidos, String telefono) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
         String correoNormalizado = TextNormalizationUtils.normalizeText(correo);
         String nombreNormalizado = TextNormalizationUtils.normalizeText(nombre);
         String apellidosNormalizados = TextNormalizationUtils.normalizeText(apellidos);
+        String telefonoNormalizado = telefono != null ? telefono.trim() : null;
         Usuario usuarioExistentePorCorreo = usuarioRepository.findByCorreo(correoNormalizado);
         if (usuarioExistentePorCorreo != null && !usuarioExistentePorCorreo.getId_usuario().equals(idUsuario)) {
             throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
         }
         validarNombreCompletoUnico(nombreNormalizado, apellidosNormalizados, idUsuario);
         usuario.setCorreo(correoNormalizado);
+        usuario.setTelefono(telefonoNormalizado);
         usuario.setNombre(nombreNormalizado);
         usuario.setApellidos(apellidosNormalizados);
         return usuarioRepository.save(usuario);
@@ -156,7 +159,8 @@ public class IUsuarioServiceImpl implements IUsuarioService {
         return actualizarUsuarioComun(idUsuario,
             actualizarUsuarioDTO.getCorreo(),
             actualizarUsuarioDTO.getNombre(),
-            actualizarUsuarioDTO.getApellidos());
+            actualizarUsuarioDTO.getApellidos(),
+            actualizarUsuarioDTO.getTelefono());
     }
 
     private void validarNombreCompletoUnico(String nombre, String apellidos, Long idUsuarioExcluir) {

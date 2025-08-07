@@ -1,5 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto;
 
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidTelefono;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.ValidTexts;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,10 @@ public class ActualizarUsuarioDTO {
     @NotBlank(message = "El correo es obligatorio")
     @Email(message = "El correo debe tener un formato válido")
     private String correo;
+
+    @NotBlank(message = "El teléfono es obligatorio")
+    @ValidTelefono
+    private String telefono;
 
     @NotBlank(message = "El nombre es obligatorio")
     @ValidTexts

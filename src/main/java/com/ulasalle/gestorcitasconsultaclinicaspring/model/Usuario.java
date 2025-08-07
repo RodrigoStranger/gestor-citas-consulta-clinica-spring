@@ -27,6 +27,9 @@ public class Usuario {
     @Column(name = "correo")
     private String correo;
 
+    @Column(name = "telefono")
+    private String telefono;
+
     @Column(name = "clave")
     @JsonIgnore
     private String clave;
