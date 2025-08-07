@@ -30,7 +30,10 @@ public enum ErrorCodeEnum {
     RUTA_NO_ENCONTRADA("SYS_001", "Endpoint no existente o no disponible."),
 
     ROL_NO_ENCONTRADO("ROL_001", "El rol especificado no fue encontrado en el sistema."),
-    ROL_TIPO_REQUERIDO("ROL_002", "El tipo de rol es obligatorio.");
+    ROL_TIPO_REQUERIDO("ROL_002", "El tipo de rol es obligatorio."),
+
+    HORARIO_DUPLICADO("HOR_001", "Ya existe un horario igual para ese día y rango de horas."),
+    HORARIO_INVALIDO("HOR_002", "El horario está fuera del rango permitido por la clínica.");
 
     private final String code;
     private final String message;
