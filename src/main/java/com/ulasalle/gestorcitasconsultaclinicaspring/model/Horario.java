@@ -22,10 +22,10 @@ public class Horario {
     private TipoDiaSemana tipoDiaSemana;
 
     @Column(name = "hora_inicio")
-    private String horaInicio;
+    private java.time.LocalTime horaInicio;
 
     @Column(name = "hora_fin")
-    private  String horaFin;
+    private java.time.LocalTime horaFin;
 
     @ManyToMany
     @JoinTable(
