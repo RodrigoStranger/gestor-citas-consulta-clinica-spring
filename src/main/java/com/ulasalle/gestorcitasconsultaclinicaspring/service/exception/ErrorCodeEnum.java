@@ -26,6 +26,7 @@ public enum ErrorCodeEnum {
     MEDICO_NO_ENCONTRADO("MED_002", "El médico especificado no fue encontrado."),
     MEDICO_ESTADO_INVALIDO("MED_003", "El estado del médico debe ser 0 (inactivo) o 1 (activo)."),
     MEDICO_ESPECIALIDAD_INVALIDA("MED_004", "La especialidad del médico debe contener solo letras y espacios, tener entre 2 y 100 caracteres, y cada palabra debe tener al menos 2 letras."),
+    TELEFONO_MEDICO_DUPLICADO("MED_005", "Ya existe un médico con ese teléfono."),
 
     RUTA_NO_ENCONTRADA("SYS_001", "Endpoint no existente o no disponible."),
 

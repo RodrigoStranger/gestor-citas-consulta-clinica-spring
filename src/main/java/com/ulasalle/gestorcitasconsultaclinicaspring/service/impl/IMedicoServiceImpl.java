@@ -41,6 +41,10 @@ public class IMedicoServiceImpl implements IMedicoService {
     @Override
     public Medico crearMedico(MedicoDTO medicoDTO) {
         validarEspecialidad(medicoDTO.getEspecialidad());
+        Medico medicoExistente = medicoRepository.findByUsuario_Telefono(medicoDTO.getTelefono());
+        if (medicoExistente != null) {
+            throw new BusinessException(ErrorCodeEnum.TELEFONO_MEDICO_DUPLICADO);
+        }
         Usuario usuario = usuarioService.crearUsuario(medicoDTO);
         usuario = usuarioService.agregarRolAUsuario(usuario.getId_usuario(), TipoRol.MEDICO);
         Medico medico = crearMedicoDesdeDTO(medicoDTO, usuario);

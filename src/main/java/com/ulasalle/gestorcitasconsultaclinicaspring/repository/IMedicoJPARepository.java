@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface IMedicoJPARepository extends JpaRepository<Medico, Long> {
     List<Medico> findByUsuario_ActivoAndUsuario_Roles_Nombre(int activo, TipoRol tipoRol);
+    Medico findByUsuario_Telefono(String telefono);
 }
