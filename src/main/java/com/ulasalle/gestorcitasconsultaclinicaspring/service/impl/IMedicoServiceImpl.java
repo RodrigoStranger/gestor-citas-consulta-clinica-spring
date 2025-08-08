@@ -3,6 +3,7 @@ package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarEspecialidadDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.AsignarHorarioMedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.TextsValidator;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.*;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IMedicoJPARepository;
@@ -127,6 +128,9 @@ public class IMedicoServiceImpl implements IMedicoService {
     public Medico asignarHorarioAMedico(AsignarHorarioMedicoDTO dto) {
         Medico medico = medicoRepository.findById(dto.getIdMedico())
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
+        if (medico.getUsuario().getActivo() == 0) {
+            throw new BusinessException(ErrorCodeEnum.MEDICO_DESHABILITADO_NO_PUEDE_ASIGNAR_HORARIO);
+        }
         Horario horario = horarioRepository.findById(dto.getIdHorario())
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.HORARIO_NO_EXISTE));
         boolean yaAsignado = medico.getHorarios().stream()
@@ -157,5 +161,34 @@ public class IMedicoServiceImpl implements IMedicoService {
         Medico medico = medicoRepository.findById(idMedico)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
         return medico.getHorarios();
+    }
+
+    @Override
+    public Medico actualizarMedico(Long idMedico, ActualizarMedicoDTO dto) {
+        Medico medico = medicoRepository.findById(idMedico)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
+        Usuario usuario = medico.getUsuario();
+        if (usuario.getActivo() == 0) {
+            throw new BusinessException(ErrorCodeEnum.MEDICO_DESHABILITADO_NO_PUEDE_ACTUALIZAR);
+        }
+        Medico medicoExistente = medicoRepository.findByUsuario_Telefono(dto.getTelefono());
+        if (medicoExistente != null && !medicoExistente.getId_medico().equals(medico.getId_medico())) {
+            throw new BusinessException(ErrorCodeEnum.TELEFONO_MEDICO_DUPLICADO);
+        }
+        Medico medicoCorreo = medicoRepository.findByUsuario_Correo(dto.getCorreo());
+        if (medicoCorreo != null && !medicoCorreo.getId_medico().equals(medico.getId_medico())) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_CORREO_EN_USO);
+        }
+        Medico medicoNombreApellido = medicoRepository.findByUsuario_NombreAndUsuario_Apellidos(dto.getNombre(), dto.getApellidos());
+        if (medicoNombreApellido != null && !medicoNombreApellido.getId_medico().equals(medico.getId_medico())) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NOMBRE_EN_USO);
+        }
+        usuario.setCorreo(dto.getCorreo());
+        usuario.setTelefono(dto.getTelefono());
+        usuario.setNombre(dto.getNombre());
+        usuario.setApellidos(dto.getApellidos());
+        usuarioRepository.save(usuario);
+        medico.setEspecialidad(dto.getEspecialidad());
+        return medicoRepository.save(medico);
     }
 }
