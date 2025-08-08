@@ -2,10 +2,12 @@ package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarEspecialidadDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.AsignarHorarioMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.validator.TextsValidator;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.*;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IMedicoJPARepository;
 import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IUsuarioJPARepository;
+import com.ulasalle.gestorcitasconsultaclinicaspring.repository.IHorarioJPARepository;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.IMedicoService;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.IUsuarioService;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.exception.BusinessException;
@@ -24,13 +26,16 @@ public class IMedicoServiceImpl implements IMedicoService {
     private final IMedicoJPARepository medicoRepository;
     private final IUsuarioJPARepository usuarioRepository;
     private final IUsuarioService usuarioService;
+    private final IHorarioJPARepository horarioRepository;
 
     public IMedicoServiceImpl(IMedicoJPARepository medicoRepository,
                              IUsuarioJPARepository usuarioRepository,
-                             IUsuarioService usuarioService) {
+                             IUsuarioService usuarioService,
+                             IHorarioJPARepository horarioRepository) {
         this.medicoRepository = medicoRepository;
         this.usuarioRepository = usuarioRepository;
         this.usuarioService = usuarioService;
+        this.horarioRepository = horarioRepository;
     }
 
     @Override
@@ -112,5 +117,41 @@ public class IMedicoServiceImpl implements IMedicoService {
                     (existing, replacement) -> existing
                 ))
                 .values());
+    }
+
+    @Override
+    public Medico asignarHorarioAMedico(AsignarHorarioMedicoDTO dto) {
+        Medico medico = medicoRepository.findById(dto.getIdMedico())
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
+        Horario horario = horarioRepository.findById(dto.getIdHorario())
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.HORARIO_NO_EXISTE));
+        boolean yaAsignado = medico.getHorarios().stream()
+            .anyMatch(h -> h.getId_horario().equals(dto.getIdHorario()));
+        if (yaAsignado) {
+            throw new BusinessException(ErrorCodeEnum.HORARIO_YA_ASIGNADO_MEDICO);
+        }
+        medico.getHorarios().add(horario);
+        horario.getMedicos().add(medico);
+        medicoRepository.save(medico);
+        horarioRepository.save(horario);
+        return medico;
+    }
+
+    @Override
+    public Horario asignarHorarioAMedicoYRetornarHorario(AsignarHorarioMedicoDTO dto) {
+        Medico medico = asignarHorarioAMedico(dto);
+        if (medico != null && dto.getIdHorario() != null) {
+            return medico.getHorarios().stream()
+                .filter(h -> h.getId_horario().equals(dto.getIdHorario()))
+                .findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    @Override
+    public Set<Horario> obtenerHorariosPorMedicoId(Long idMedico) {
+        Medico medico = medicoRepository.findById(idMedico)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.MEDICO_NO_ENCONTRADO));
+        return medico.getHorarios();
     }
 }

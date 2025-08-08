@@ -29,4 +29,25 @@ public class HorarioController {
         var response = ResponseWrapper.success(horarioActualizado, "Horario actualizado exitosamente");
         return response.toResponseEntity();
     }
+
+    @GetMapping
+    public ResponseEntity<?> listarHorarios() {
+        var horarios = horarioService.listarHorarios();
+        var response = ResponseWrapper.success(horarios, "Horarios obtenidos exitosamente");
+        return response.toResponseEntity();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtenerHorarioPorId(@PathVariable Long id) {
+        Horario horario = horarioService.obtenerHorarioPorId(id);
+        var response = ResponseWrapper.success(horario, "Horario obtenido exitosamente");
+        return response.toResponseEntity();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarHorarioPorId(@PathVariable Long id) {
+        horarioService.eliminarHorarioPorId(id);
+        var response = ResponseWrapper.success(null, "Horario eliminado exitosamente");
+        return response.toResponseEntity();
+    }
 }

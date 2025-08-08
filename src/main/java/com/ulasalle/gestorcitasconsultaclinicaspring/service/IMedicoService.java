@@ -2,7 +2,9 @@ package com.ulasalle.gestorcitasconsultaclinicaspring.service;
 
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarEspecialidadDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.AsignarHorarioMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.model.Horario;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
 
 import java.util.List;
@@ -16,4 +18,7 @@ public interface IMedicoService {
     Medico cambiarEstadoMedico(Long id, int nuevoEstado);
     Medico actualizarEspecialidad(Long idMedico, ActualizarEspecialidadDTO request);
     Set<String> obtenerTodasLasEspecialidades();
+    Medico asignarHorarioAMedico(AsignarHorarioMedicoDTO dto);
+    Horario asignarHorarioAMedicoYRetornarHorario(AsignarHorarioMedicoDTO dto);
+    Set<Horario> obtenerHorariosPorMedicoId(Long idMedico);
 }

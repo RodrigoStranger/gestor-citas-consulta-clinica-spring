@@ -1,7 +1,9 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.ActualizarEspecialidadDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.AsignarHorarioMedicoDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.MedicoDTO;
+import com.ulasalle.gestorcitasconsultaclinicaspring.model.Horario;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
 import com.ulasalle.gestorcitasconsultaclinicaspring.service.IMedicoService;
 import jakarta.validation.Valid;
@@ -74,6 +76,20 @@ public class MedicoController {
     public ResponseEntity<?> obtenerTodasLasEspecialidades() {
         Set<String> especialidades = medicoService.obtenerTodasLasEspecialidades();
         ResponseWrapper<Set<String>> response = ResponseWrapper.success(especialidades, "Especialidades obtenidas exitosamente");
+        return response.toResponseEntity();
+    }
+
+    @PostMapping("/asignar-horario")
+    public ResponseEntity<?> asignarHorarioAMedico(@RequestBody AsignarHorarioMedicoDTO dto) {
+        Horario horario = medicoService.asignarHorarioAMedicoYRetornarHorario(dto);
+        var response = ResponseWrapper.success(horario, "Horario asignado exitosamente al médico");
+        return response.toResponseEntity();
+    }
+
+    @GetMapping("/{idMedico}/horarios")
+    public ResponseEntity<?> obtenerHorariosPorMedicoId(@PathVariable Long idMedico) {
+        var horarios = medicoService.obtenerHorariosPorMedicoId(idMedico);
+        var response = ResponseWrapper.success(horarios, "Horarios del médico obtenidos exitosamente");
         return response.toResponseEntity();
     }
 }

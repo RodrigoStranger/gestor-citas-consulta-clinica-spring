@@ -77,4 +77,23 @@ public class IHorarioServiceImpl implements IHorarioService {
         horario.setHoraFin(horaFin);
         return horarioRepository.save(horario);
     }
+
+    @Override
+    public List<Horario> listarHorarios() {
+        return horarioRepository.findAll();
+    }
+
+    @Override
+    public Horario obtenerHorarioPorId(Long id) {
+        return horarioRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCodeEnum.HORARIO_NO_EXISTE));
+    }
+
+    @Override
+    public void eliminarHorarioPorId(Long id) {
+        if (!horarioRepository.existsById(id)) {
+            throw new BusinessException(ErrorCodeEnum.HORARIO_NO_EXISTE);
+        }
+        horarioRepository.deleteById(id);
+    }
 }
