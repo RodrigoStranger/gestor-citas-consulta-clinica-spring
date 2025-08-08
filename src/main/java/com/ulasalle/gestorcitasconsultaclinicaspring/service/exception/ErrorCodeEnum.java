@@ -34,7 +34,8 @@ public enum ErrorCodeEnum {
 
     HORARIO_DUPLICADO("HOR_001", "Ya existe un horario igual para ese día y rango de horas."),
     HORARIO_INVALIDO("HOR_002", "El horario está fuera del rango permitido por la clínica."),
-    HORARIO_NO_EXISTE("HOR_003", "El horario especificado no existe.");
+    HORARIO_NO_EXISTE("HOR_003", "El horario especificado no existe."),
+    HORARIO_YA_ASIGNADO_MEDICO("HOR_004", "El horario ya está asignado a este médico.");
 
     private final String code;
     private final String message;
