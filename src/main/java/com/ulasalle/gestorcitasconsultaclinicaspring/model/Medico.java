@@ -28,7 +28,7 @@ public class Medico {
     @Column(name = "especialidad")
     private String especialidad;
 
-    @ManyToMany(mappedBy = "medicos")
+    @ManyToMany(mappedBy = "medicos", fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Horario> horarios = new HashSet<>();
 }

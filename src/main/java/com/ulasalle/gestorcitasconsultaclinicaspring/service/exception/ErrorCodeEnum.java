@@ -23,10 +23,12 @@ public enum ErrorCodeEnum {
     USUARIO_NO_ES_PACIENTE("USR_016", "El usuario especificado no tiene el rol de paciente."),
     USUARIO_NO_ES_MEDICO("USR_017", "El usuario especificado no tiene el rol de médico."),
 
-    MEDICO_NO_ENCONTRADO("MED_002", "El médico especificado no fue encontrado."),
-    MEDICO_ESTADO_INVALIDO("MED_003", "El estado del médico debe ser 0 (inactivo) o 1 (activo)."),
-    MEDICO_ESPECIALIDAD_INVALIDA("MED_004", "La especialidad del médico debe contener solo letras y espacios, tener entre 2 y 100 caracteres, y cada palabra debe tener al menos 2 letras."),
-    TELEFONO_MEDICO_DUPLICADO("MED_005", "Ya existe un médico con ese teléfono."),
+    MEDICO_NO_ENCONTRADO("MED_001", "El médico especificado no fue encontrado."),
+    MEDICO_NO_TIENE_HORARIO("MED_002", "El médico no tiene un horario asignado para el día especificado."),
+    MEDICO_NO_ES_VALIDO("MED_003", "El usuario no tiene el rol de MÉDICO."),
+    MEDICO_ESTADO_INVALIDO("MED_004", "El estado del médico debe ser 0 (inactivo) o 1 (activo)."),
+    MEDICO_ESPECIALIDAD_INVALIDA("MED_005", "La especialidad del médico debe contener solo letras y espacios, tener entre 2 y 100 caracteres, y cada palabra debe tener al menos 2 letras."),
+    TELEFONO_MEDICO_DUPLICADO("MED_006", "Ya existe un médico con ese teléfono."),
 
     RUTA_NO_ENCONTRADA("SYS_001", "Endpoint no existente o no disponible."),
 
@@ -38,8 +40,12 @@ public enum ErrorCodeEnum {
     HORARIO_NO_EXISTE("HOR_003", "El horario especificado no existe."),
     HORARIO_YA_ASIGNADO_MEDICO("HOR_004", "El horario ya está asignado a este médico."),
 
-    MEDICO_DESHABILITADO_NO_PUEDE_ACTUALIZAR("MED_006","No se puede actualizar a un medico desabilitado" ),
-    MEDICO_DESHABILITADO_NO_PUEDE_ASIGNAR_HORARIO("MED_007", "No se puede asignar horarios a un médico deshabilitado.");
+    MEDICO_DESHABILITADO_NO_PUEDE_ACTUALIZAR("MED_007","No se puede actualizar a un medico desabilitado" ),
+    MEDICO_DESHABILITADO_NO_PUEDE_ASIGNAR_HORARIO("MED_008", "No se puede asignar horarios a un médico deshabilitado."),
+    MEDICO_DESHABILITADO_NO_PUEDE_AGENDAR("MED_009", "Un médico deshabilitado no puede agendar citas."),
+
+    CITA_SOLAPADA("CIT_001", "La cita se solapa con otra existente."),
+    CITA_NO_ENCONTRADA("CIT_002", "La cita médica especificada no fue encontrada.");
 
     private final String code;
     private final String message;
