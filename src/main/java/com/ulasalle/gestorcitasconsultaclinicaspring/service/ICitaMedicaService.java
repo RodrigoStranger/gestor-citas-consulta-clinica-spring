@@ -11,4 +11,6 @@ public interface ICitaMedicaService {
     List<CitaMedica> obtenerTodasLasCitas();
 
     CitaMedica obtenerCitaPorId(Long id);
+
+    List<CitaMedica> obtenerCitasPorIdUsuario(Long idUsuario);
 }

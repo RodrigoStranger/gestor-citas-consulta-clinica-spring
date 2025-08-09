@@ -126,4 +126,16 @@ public class ICitaMedicaServiceImpl implements ICitaMedicaService {
         return citaMedicaRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCodeEnum.CITA_NO_ENCONTRADA));
     }
+
+    @Override
+    public List<CitaMedica> obtenerCitasPorIdUsuario(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
+
+        if (!usuario.getRolPorDefecto().equals(TipoRol.PACIENTE)) {
+            throw new BusinessException(ErrorCodeEnum.USUARIO_NO_ES_PACIENTE);
+        }
+
+        return citaMedicaRepository.findByUsuario(usuario);
+    }
 }

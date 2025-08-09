@@ -37,4 +37,11 @@ public class CitaMedicaController {
         var response = ResponseWrapper.success(cita, "Cita obtenida exitosamente");
         return response.toResponseEntity();
     }
+
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<?> obtenerCitasPorIdUsuario(@PathVariable Long idUsuario) {
+        var citas = citaMedicaService.obtenerCitasPorIdUsuario(idUsuario);
+        var response = ResponseWrapper.success(citas, "Citas del usuario obtenidas exitosamente");
+        return response.toResponseEntity();
+    }
 }
