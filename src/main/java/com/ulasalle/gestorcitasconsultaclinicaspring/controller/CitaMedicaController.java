@@ -47,7 +47,8 @@ public class CitaMedicaController {
 
     @PutMapping("/{id}/cancelar")
     public ResponseEntity<?> cancelarCita(@PathVariable Long id) {
-        citaMedicaService.cancelarCita(id);
-        return ResponseEntity.ok("Cita cancelada exitosamente");
+        var citaCancelada = citaMedicaService.cancelarCita(id);
+        var response = ResponseWrapper.success(citaCancelada, "Cita médica cancelada exitosamente");
+        return response.toResponseEntity();
     }
 }

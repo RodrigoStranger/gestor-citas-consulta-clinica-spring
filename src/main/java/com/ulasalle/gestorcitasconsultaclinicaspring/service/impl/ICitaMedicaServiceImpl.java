@@ -143,10 +143,10 @@ public class ICitaMedicaServiceImpl implements ICitaMedicaService {
     }
 
     @Override
-    public void cancelarCita(Long id) {
+    public CitaMedica cancelarCita(Long id) {
         CitaMedica cita = citaMedicaRepository.findById(id)
             .orElseThrow(() -> new BusinessException(ErrorCodeEnum.CITA_NO_ENCONTRADA));
         cita.setEstado(EstadoCita.CANCELADO);
-        citaMedicaRepository.save(cita);
+        return citaMedicaRepository.save(cita);
     }
 }
