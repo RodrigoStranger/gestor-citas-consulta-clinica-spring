@@ -265,4 +265,10 @@ public class IUsuarioServiceImpl implements IUsuarioService {
                 .anyMatch(rol -> rol.getNombre() != null && rol.getNombre().equals(TipoRol.PACIENTE)))
             .collect(Collectors.toList());
     }
+
+    @Override
+    public Usuario obtenerUsuarioPorId(Long idUsuario) {
+        return usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new BusinessException(ErrorCodeEnum.USUARIO_NO_ENCONTRADO));
+    }
 }

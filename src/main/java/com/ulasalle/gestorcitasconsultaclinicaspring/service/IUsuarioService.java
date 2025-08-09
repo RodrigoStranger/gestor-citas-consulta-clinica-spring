@@ -20,4 +20,5 @@ public interface IUsuarioService {
     List<Rol> obtenerRolesDeUsuario(Long idUsuario);
     Usuario obtenerPacientePorId(Long idUsuario);
     List<Usuario> listarPacientes();
+    Usuario obtenerUsuarioPorId(Long idUsuario);
 }

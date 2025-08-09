@@ -46,7 +46,8 @@ public class IMedicoServiceImpl implements IMedicoService {
         if (medicoExistente != null) {
             throw new BusinessException(ErrorCodeEnum.TELEFONO_MEDICO_DUPLICADO);
         }
-        if (medicoDTO.getEstado() != null && medicoDTO.getEstado() == EstadoUsuario.INACTIVO) {
+        Usuario usuarioExistente = usuarioRepository.findByTelefono(medicoDTO.getTelefono());
+        if (usuarioExistente != null && EstadoUsuario.fromValor(usuarioExistente.getActivo()) == EstadoUsuario.INACTIVO) {
             throw new BusinessException(ErrorCodeEnum.MEDICO_DESHABILITADO_NO_PUEDE_AGENDAR);
         }
         Usuario usuario = usuarioService.crearUsuario(medicoDTO);

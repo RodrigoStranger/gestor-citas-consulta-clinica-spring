@@ -2,6 +2,7 @@ package com.ulasalle.gestorcitasconsultaclinicaspring.service.impl;
 
 import com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto.CrearCitaMedicaDTO;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.CitaMedica;
+import com.ulasalle.gestorcitasconsultaclinicaspring.model.EstadoCita;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.Medico;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.TipoDiaSemana;
 import com.ulasalle.gestorcitasconsultaclinicaspring.model.TipoRol;
@@ -39,11 +40,12 @@ public class ICitaMedicaServiceImpl implements ICitaMedicaService {
 
         var usuario = obtenerUsuario(crearCitaMedicaDTO.getIdUsuario());
         validarRolUsuario(usuario);
-
         validarHorariosMedico(medico, crearCitaMedicaDTO);
         validarSolapamientoCita(medico, crearCitaMedicaDTO);
+        CitaMedica nuevaCita = guardarCitaMedica(medico, usuario, crearCitaMedicaDTO);
+        nuevaCita.setEstado(EstadoCita.PROCESO);
 
-        return guardarCitaMedica(medico, usuario, crearCitaMedicaDTO);
+        return nuevaCita;
     }
 
     private Medico obtenerMedico(Long idMedico) {
@@ -112,6 +114,7 @@ public class ICitaMedicaServiceImpl implements ICitaMedicaService {
         nuevaCita.setFechaCita(crearCitaMedicaDTO.getFechaCita());
         nuevaCita.setHoraInicio(crearCitaMedicaDTO.getHoraInicio());
         nuevaCita.setHoraFin(crearCitaMedicaDTO.getHoraFin());
+        nuevaCita.setEstado(EstadoCita.PROCESO);
 
         return citaMedicaRepository.save(nuevaCita);
     }
@@ -137,5 +140,13 @@ public class ICitaMedicaServiceImpl implements ICitaMedicaService {
         }
 
         return citaMedicaRepository.findByUsuario(usuario);
+    }
+
+    @Override
+    public void cancelarCita(Long id) {
+        CitaMedica cita = citaMedicaRepository.findById(id)
+            .orElseThrow(() -> new BusinessException(ErrorCodeEnum.CITA_NO_ENCONTRADA));
+        cita.setEstado(EstadoCita.CANCELADO);
+        citaMedicaRepository.save(cita);
     }
 }

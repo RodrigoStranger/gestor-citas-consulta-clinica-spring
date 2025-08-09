@@ -1,9 +1,6 @@
 package com.ulasalle.gestorcitasconsultaclinicaspring.controller.dto;
-
 import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,6 +22,4 @@ public class CrearCitaMedicaDTO {
 
     @NotNull(message = "La hora de fin de la cita es obligatoria")
     private LocalTime horaFin;
-
-
 }

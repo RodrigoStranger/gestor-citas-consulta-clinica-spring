@@ -12,4 +12,5 @@ public interface IUsuarioJPARepository extends JpaRepository<Usuario, Long> {
     boolean existsByDni(String dni);
     Usuario findByCorreo(String correo);
     List<Usuario> findByActivo(int activo);
+    Usuario findByTelefono(String telefono);
 }

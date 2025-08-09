@@ -13,4 +13,6 @@ public interface ICitaMedicaService {
     CitaMedica obtenerCitaPorId(Long id);
 
     List<CitaMedica> obtenerCitasPorIdUsuario(Long idUsuario);
+
+    void cancelarCita(Long id);
 }

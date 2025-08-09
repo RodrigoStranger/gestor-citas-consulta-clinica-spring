@@ -45,7 +45,7 @@ public enum ErrorCodeEnum {
     MEDICO_DESHABILITADO_NO_PUEDE_AGENDAR("MED_009", "Un médico deshabilitado no puede agendar citas."),
 
     CITA_SOLAPADA("CIT_001", "La cita se solapa con otra existente."),
-    CITA_NO_ENCONTRADA("CIT_002", "La cita médica especificada no fue encontrada.");
+    CITA_NO_ENCONTRADA("CIT_002", "El ID de la cita no fue encontrado.");
 
     private final String code;
     private final String message;
